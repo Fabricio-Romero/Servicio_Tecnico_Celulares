@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 from Database.db_connection import conectar
-from datetime import datetime
+from Modules.Products import ProductosApp
 
 
 class MovimientosApp:
@@ -9,8 +9,17 @@ class MovimientosApp:
         self.root = root
         self.root.title("Registro de Movimientos")
 
+        frame_gesProd = tk.Frame(root)
+        frame_gesProd.pack(fill="x")
+
+        tk.Button(
+            frame_gesProd, text="GESTIONAR PRODUCTOS", bg="#2196F3", fg="white",
+            font=("Arial", 10, "bold"),
+            command=self.abrir_productos
+        ).pack(side="right", padx=10, pady=10)
+
         frame = tk.Frame(root)
-        frame.pack(pady=20, padx=20)
+        frame.pack(padx=20)
 
         tk.Label(frame, text="Producto:").grid(row=0, column=0, sticky="w")
         self.producto_cb = ttk.Combobox(frame, width=40)
@@ -36,7 +45,7 @@ class MovimientosApp:
             frame, text="REGISTRAR", bg="#FF5722", fg="blue",
             font=("Arial", 10, "bold"),
             command=self.registrar
-        ).grid(row=3, column=0, columnspan=2, pady=15)
+        ).grid(row=3, column=0, columnspan=2)
 
         # Tabla de movimientos recientes
         self.tree = ttk.Treeview(
@@ -49,12 +58,16 @@ class MovimientosApp:
             ["Fecha", "Cantidad", "Tipo", "Producto"]
         ):
             self.tree.heading(col, text=text)
-            self.tree.column(col, width=140)
+            self.tree.column(col, width=140, anchor="center")
 
         self.tree.pack(pady=10, padx=20, fill="both", expand=True)
 
         self.cargar_productos()
         self.cargar_movimientos()
+
+    def abrir_productos(self):
+        self.nueva_ventana("Productos", lambda root: ProductosApp(
+            root, es_admin=True), "850x500")
 
     def cargar_productos(self):
         conn = conectar()
@@ -84,7 +97,7 @@ class MovimientosApp:
                 tipo = "ENTRADA" if row[3] == "entrada" else "SALIDA"
                 self.tree.insert(
                     "", 0,
-                    values=(row[0], row[1], row[2], tipo, row[4])
+                    values=(row[0], row[1], row[2], row[3])
                 )
             conn.close()
 
@@ -154,3 +167,9 @@ class MovimientosApp:
 
         self.cargar_movimientos()
         self.cantidad_entry.delete(0, "end")
+
+    def nueva_ventana(self, titulo, clase, size):
+        ventana = tk.Toplevel(self.root)
+        ventana.title(titulo)
+        ventana.geometry(size)
+        clase(ventana)

@@ -8,7 +8,7 @@ from Modules.Menu import MenuApp
 class LoginApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("Minimarket - Login")
+        self.root.title("Servicio Técnico - Login")
         self.root.geometry("350x250")
         self.root.resizable(False, False)
 

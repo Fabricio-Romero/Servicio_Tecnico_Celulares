@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 from Database.db_connection import conectar
+from Modules.Categories import CategoriasApp
 
 
 class ProductosApp:
@@ -22,10 +23,14 @@ class ProductosApp:
                 row=i, column=0, sticky="w", pady=2
             )
             if campo in ["Categoría", "Proveedor"]:
-                self.entries[campo] = ttk.Combobox(frame_form, width=30)
+                self.entries[campo] = ttk.Combobox(
+                    frame_form, width=30, state="readonly")
             else:
                 self.entries[campo] = tk.Entry(frame_form, width=33)
             self.entries[campo].grid(row=i, column=1, pady=2, padx=5)
+
+        tk.Button(frame_form, text="GESTIONAR CATEGORIAS",
+                  bg="#BE2828", fg="white", command=self.abrir_categorias).grid(row=3, column=2)
 
         # Botones
         if not self.es_admin:
@@ -58,6 +63,7 @@ class ProductosApp:
         )
         for col in self.tree["columns"]:
             self.tree.heading(col, text=col)
+            self.tree.column("Nombre", width=200, anchor="center")
             self.tree.column(col, width=120, anchor="center")
 
         self.tree.pack(pady=10, padx=20, fill="both", expand=True)
@@ -67,6 +73,10 @@ class ProductosApp:
         self.cargar_proveedores()
         self.cargar_productos()
         self.tree.bind("<<TreeviewSelect>>", self.seleccionar)
+
+    def abrir_categorias(self):
+        self.nueva_ventana("Gestionar Categorias", lambda root: CategoriasApp(
+            root, es_admin=True), "800x500")
 
     def cargar_categorias(self):
         conn = conectar()
@@ -81,7 +91,7 @@ class ProductosApp:
         conn = conectar()
         if conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT nombre FROM proveedores")
+            cursor.execute("SELECT comercio FROM proveedores")
             provs = [row[0] for row in cursor.fetchall()]
             self.entries["Proveedor"]["values"] = provs
             conn.close()
@@ -94,7 +104,7 @@ class ProductosApp:
         if conn:
             cursor = conn.cursor()
             cursor.execute("""
-                SELECT p.producto_id, p.nombre, p.cantidad, p.precio, c.nombre, pr.nombre
+                SELECT p.producto_id, p.nombre, p.cantidad, p.precio, c.nombre, pr.comercio
                 FROM productos p
                 LEFT JOIN categorias c ON p.categoria_id = c.categoria_id
                 LEFT JOIN proveedores pr ON p.proveedor_id = pr.proveedor_id
@@ -116,7 +126,7 @@ class ProductosApp:
                 INSERT INTO productos (nombre, cantidad, precio, categoria_id, proveedor_id)
                 VALUES (%s, %s, %s,
                     (SELECT categoria_id FROM categorias WHERE nombre=%s),
-                    (SELECT categoria_id FROM proveedores WHERE nombre=%s))
+                    (SELECT proveedor_id FROM proveedores WHERE comercio=%s))
             """, (*datos,))  # ← Usa *datos y coma final
 
             conn.commit()
@@ -143,7 +153,7 @@ class ProductosApp:
             cursor.execute("""
                 UPDATE productos SET nombre=%s, cantidad=%s, precio=%s,
                 categoria_id=(SELECT categoria_id FROM categorias WHERE nombre=%s),
-                proveedor_id=(SELECT proveedor_id FROM proveedores WHERE nombre=%s)
+                proveedor_id=(SELECT proveedor_id FROM proveedores WHERE comercio=%s)
                 WHERE producto_id=%s
             """, (*datos, product_id))
 
@@ -179,8 +189,8 @@ class ProductosApp:
             self.limpiar()
 
             self.entries["Nombre"].insert(0, valores[1])
-            self.entries["Cantidad"].insert(0, valores[3])
-            self.entries["Precio"].insert(0, valores[2])
+            self.entries["Cantidad"].insert(0, valores[2])
+            self.entries["Precio"].insert(0, valores[3])
             self.entries["Categoría"].set(valores[4])
             self.entries["Proveedor"].set(valores[5])
 
@@ -212,3 +222,9 @@ class ProductosApp:
                 entry.delete(0, "end")
             elif isinstance(entry, ttk.Combobox):
                 entry.set("")
+
+    def nueva_ventana(self, titulo, clase, size):
+        ventana = tk.Toplevel(self.root)
+        ventana.title(titulo)
+        ventana.geometry(size)
+        clase(ventana)
