@@ -64,17 +64,17 @@ class TrabajosApp:
         tk.Button(
             button_frame, text="AGREGAR", bg="#6CFF22", fg="blue",
             font=("Arial", 10, "bold"),
-            command=self.agregar
+            command=self.agregar_trabajos
         ).grid(row=0, column=0, padx=5)
         tk.Button(
             button_frame, text="ACTUALIZAR", bg="#227EFF", fg="orange",
             font=("Arial", 10, "bold"),
-            command=self.actualizar
+            command=self.actualizar_trabajos
         ).grid(row=0, column=1, padx=5)
         tk.Button(
             button_frame, text="ELIMINAR", bg="#F80000", fg="black",
             font=("Arial", 10, "bold"),
-            command=self.eliminar
+            command=self.eliminar_trabajos
         ).grid(row=0, column=2, padx=5)
         tk.Button(
             button_frame, text="LIMPIAR", bg="#00F2FF", fg="green",
@@ -97,26 +97,109 @@ class TrabajosApp:
             self.tree_trabajo.column("id", width=20, anchor="center")
         self.tree_trabajo.pack(fill="both", expand=True, padx=10, pady=10)
 
-        # # Pestaña 2: Gestionar Celulares
-        # frame2 = tk.Frame(notebook)
-        # notebook.add(frame2, text="Gestionar Celulares")
+        # Pestaña 2: Gestionar Celulares y Marcas
+        frame2 = tk.Frame(notebook)
+        notebook.add(frame2, text="Gestionar Celulares y Marcas")
 
-        # # Tabla de Clientes
+        # Labels y Entries de Gestion de celulares
 
-        # self.tree_gesCli = ttk.Treeview(
-        #     frame2,
-        #     columns=("id", "Nombre", "Apellido", "Contacto"),
-        #     show="headings"
-        # )
-        # for col in self.tree_gesCli["columns"]:
-        #     self.tree_gesCli.heading(col, text=col)
-        #     self.tree_gesCli.column(col, width=150, anchor="center")
-        # self.tree_gesCli.pack(fill="both", expand=True, padx=10, pady=10)
+        tk.Label(frame2, text="GESTIÓN DE CELULARES").grid(row=0, column=2)
+
+        tk.Label(frame2, text="Modelo:").grid(row=1, column=0)
+        self.entries["Modelo"] = tk.Entry(frame2, width=25)
+        self.entries["Modelo"].grid(row=1, column=1)
+
+        tk.Label(frame2, text="Marca:").grid(row=2, column=0)
+        self.entries["Marca"] = ttk.Combobox(
+            frame2, width=25, state="readonly")
+        self.entries["Marca"].grid(row=2, column=1)
+
+        # Botones de gestion de celulares
+
+        tk.Button(
+            frame2, text="AGREGAR", bg="#6CFF22", fg="blue",
+            font=("Arial", 10, "bold"),
+            command=self.agregar_celulares
+        ).grid(row=3, column=0, columnspan=2, padx=5)
+        tk.Button(
+            frame2, text="ACTUALIZAR", bg="#227EFF", fg="orange",
+            font=("Arial", 10, "bold"),
+            command=self.actualizar_celulares
+        ).grid(row=4, column=0, columnspan=2, padx=5)
+        tk.Button(
+            frame2, text="ELIMINAR", bg="#F80000", fg="black",
+            font=("Arial", 10, "bold"),
+            command=self.eliminar_celulares
+        ).grid(row=5, column=0, columnspan=2, padx=5)
+        tk.Button(
+            frame2, text="LIMPIAR", bg="#00F2FF", fg="green",
+            font=("Arial", 10, "bold"),
+            command=self.limpiar
+        ).grid(row=6, column=0, columnspan=2, padx=5)
+
+        # Tabla de celulares
+
+        self.tree_gesCel = ttk.Treeview(
+            frame2,
+            columns=("id", "Modelo", "Marca"),
+            show="headings"
+        )
+        for col in self.tree_gesCel["columns"]:
+            self.tree_gesCel.heading(col, text=col)
+            self.tree_gesCel.column(col, width=150, anchor="center")
+        self.tree_gesCel.grid(row=1, column=2, rowspan=6,
+                              padx=10, pady=10, ipady=200)
+
+        # Labels y entries de marcas
+
+        tk.Label(frame2, text="GESTIÓN DE MARCAS").grid(row=0, column=5)
+
+        tk.Label(frame2, text="Marca:").grid(row=1, column=3)
+        self.entries["GesMarca"] = tk.Entry(frame2, width=25)
+        self.entries["GesMarca"].grid(row=1, column=4)
+
+        # Botones de Marcas
+
+        tk.Button(
+            frame2, text="AGREGAR", bg="#6CFF22", fg="blue",
+            font=("Arial", 10, "bold"),
+            command=self.agregar_marcas
+        ).grid(row=2, column=3, columnspan=2, padx=5)
+        tk.Button(
+            frame2, text="ACTUALIZAR", bg="#227EFF", fg="orange",
+            font=("Arial", 10, "bold"),
+            command=self.actualizar_marcas
+        ).grid(row=3, column=3, columnspan=2, padx=5)
+        tk.Button(
+            frame2, text="ELIMINAR", bg="#F80000", fg="black",
+            font=("Arial", 10, "bold"),
+            command=self.eliminar_marcas
+        ).grid(row=4, column=3, columnspan=2, padx=5)
+        tk.Button(
+            frame2, text="LIMPIAR", bg="#00F2FF", fg="green",
+            font=("Arial", 10, "bold"),
+            command=self.limpiar
+        ).grid(row=5, column=3, columnspan=2, padx=5)
+
+        # Tabla de Marcas
+        self.tree_gesMar = ttk.Treeview(
+            frame2,
+            columns=("id", "Nombre"),
+            show="headings"
+        )
+        for col in self.tree_gesMar["columns"]:
+            self.tree_gesMar.heading(col, text=col)
+            self.tree_gesMar.column(col, width=150, anchor="center")
+        self.tree_gesMar.grid(row=1, column=5, rowspan=6,
+                              padx=10, pady=10, ipady=200)
 
         self.cargar_celulares()
         self.cargar_clientes()
-        self.cargar_trabajos()
-        self.tree_trabajo.bind("<<TreeviewSelect>>", self.seleccionar)
+        self.cargar_marcas()
+        self.cargar_trabajos_celulares_marcas()
+        self.tree_trabajo.bind("<<TreeviewSelect>>", self.seleccionar_trabajos)
+        self.tree_gesCel.bind("<<TreeviewSelect>>", self.seleccionar_celulares)
+        self.tree_gesMar.bind("<<TreeviewSelect>>", self.seleccionar_marcas)
 
     def cargar_celulares(self):
         conn = conectar()
@@ -159,7 +242,27 @@ class TrabajosApp:
         self.entries["Cliente"]["values"] = lista
         conn.close()
 
-    def cargar_trabajos(self):
+    def cargar_marcas(self):
+        conn = conectar()
+        if conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                SELECT *
+                FROM marcas
+                ORDER BY nombre DESC
+            """)
+
+        self.map_marcas = {}  # ← Guardamos mapping texto -> ID
+        lista = []
+
+        for marca_id, texto in cursor.fetchall():
+            self.map_marcas[texto] = marca_id
+            lista.append(texto)
+
+        self.entries["Marca"]["values"] = lista
+        conn.close()
+
+    def cargar_trabajos_celulares_marcas(self):
         conn = conectar()
         if not conn:
             return
@@ -182,23 +285,39 @@ class TrabajosApp:
         for row in cursor.fetchall():
             self.tree_trabajo.insert("", "end", values=row)
 
-        # # Gestionar Clientes
-        # for i in self.tree_gesCli.get_children():
-        #     self.tree_gesCli.delete(i)
+        # Celulares
 
-        # cursor.execute("""
-        #     SELECT *
-        #     FROM clientes
-        #     ORDER BY nombre DESC
-        # """)
+        for i in self.tree_gesCel.get_children():
+            self.tree_gesCel.delete(i)
 
-        # for row in cursor.fetchall():
-        #     self.tree_gesCli.insert("", "end", values=row)
+        cursor.execute("""
+            SELECT ce.celular_id, ce.modelo, ma.nombre
+            FROM celulares ce
+            JOIN marcas ma ON ce.marca_id = ma.marca_id 
+            ORDER BY ma.nombre DESC
+        """)
 
-        # conn.close()
+        for row in cursor.fetchall():
+            self.tree_gesCel.insert("", "end", values=row)
 
-    def agregar(self):
-        datos = self.obtener_datos()
+        # Marcas
+
+        for i in self.tree_gesMar.get_children():
+            self.tree_gesMar.delete(i)
+
+        cursor.execute("""
+            SELECT *
+            FROM marcas
+            ORDER BY nombre DESC
+        """)
+
+        for row in cursor.fetchall():
+            self.tree_gesMar.insert("", "end", values=row)
+
+        conn.close()
+
+    def agregar_trabajos(self):
+        datos = self.obtener_datos_trabajos()
         if not datos:
             return
 
@@ -212,11 +331,49 @@ class TrabajosApp:
 
             conn.commit()
             conn.close()
-            self.cargar_trabajos()
+            self.cargar_trabajos_celulares_marcas()
             self.limpiar()
             messagebox.showinfo("Éxito", "Trabajo agregado")
 
-    def actualizar(self):
+    def agregar_celulares(self):
+        datos = self.obtener_datos_celulares()
+        if not datos:
+            return
+
+        conn = conectar()
+        if conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                INSERT INTO celulares (modelo, marca_id)
+                VALUES (%s, %s)
+            """, (*datos,))
+
+        conn.commit()
+        conn.close()
+        self.cargar_trabajos_celulares_marcas()
+        self.limpiar()
+        messagebox.showinfo("Éxito", "Celular agregado")
+
+    def agregar_marcas(self):
+        datos = self.obtener_datos_marcas()
+        if not datos:
+            return
+
+        conn = conectar()
+        if conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                INSERT INTO marcas (nombre)
+                VALUES (%s)
+            """, (datos,))
+
+        conn.commit()
+        conn.close()
+        self.cargar_trabajos_celulares_marcas()
+        self.limpiar()
+        messagebox.showinfo("Éxito", "Marca agregada")
+
+    def actualizar_trabajos(self):
         seleccion = self.tree_trabajo.selection()
         if not seleccion:
             messagebox.showwarning("Selecciona", "Selecciona un trabajo")
@@ -224,7 +381,7 @@ class TrabajosApp:
 
         item = self.tree_trabajo.item(seleccion[0])
         trabajo_id = item["values"][0]
-        datos = self.obtener_datos()
+        datos = self.obtener_datos_trabajos()
         if not datos:
             return
 
@@ -238,10 +395,63 @@ class TrabajosApp:
 
             conn.commit()
             conn.close()
-            self.cargar_trabajos()
+            self.cargar_trabajos_celulares_marcas()
             messagebox.showinfo("Éxito", "Trabajo actualizado")
 
-    def eliminar(self):
+    def actualizar_celulares(self):
+        seleccion = self.tree_gesCel.selection()
+        if not seleccion:
+            messagebox.showwarning("Selecciona", "Selecciona un celular")
+            return
+
+        item = self.tree_gesCel.item(seleccion[0])
+        celular_id = item["values"][0]
+        datos = self.obtener_datos_celulares()
+        if not datos:
+            return
+
+        conn = conectar()
+        if conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                UPDATE celulares
+                SET modelo=%s, marca_id=%s
+                WHERE celular_id=%s
+            """, (*datos, celular_id))
+
+        conn.commit()
+        conn.close()
+        self.cargar_trabajos_celulares_marcas()
+        messagebox.showinfo("Éxito", "Celular actualizado")
+
+    def actualizar_marcas(self):
+        seleccion = self.tree_gesMar.selection()
+        if not seleccion:
+            messagebox.showwarning("Selecciona", "Selecciona una marca")
+            return
+
+        item = self.tree_gesMar.item(seleccion[0])
+        marca_id = item["values"][0]
+        datos = self.obtener_datos_marcas()
+        if not datos:
+            return
+
+        conn = conectar()
+
+        if conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                UPDATE marcas
+                SET nombre=%s
+                WHERE marca_id=%s
+            """, (datos, marca_id))
+
+        conn.commit()
+        conn.close()
+        self.cargar_trabajos_celulares_marcas()
+        messagebox.showinfo("Éxito", "Marca Actualizada")
+
+    def eliminar_trabajos(self):
         seleccion = self.tree_trabajo.selection()
         if not seleccion:
             messagebox.showwarning("Selecciona", "Selecciona un trabajo")
@@ -259,7 +469,47 @@ class TrabajosApp:
                 )
                 conn.commit()
                 conn.close()
-                self.cargar_trabajos()
+                self.cargar_trabajos_celulares_marcas()
+
+    def eliminar_celulares(self):
+        seleccion = self.tree_gesCel.selection()
+        if not seleccion:
+            messagebox.showwarning("Selecciona", "Selecciona un celular")
+            return
+
+        if messagebox.askyesno("Confirmar", "¿Eliminar celular?"):
+            celular_id = self.tree_gesCel.item(seleccion[0])["values"][0]
+
+            conn = conectar()
+            if conn:
+                cursor = conn.cursor()
+                cursor.execute("""
+                    DELETE FROM celulares
+                    WHERE celular_id=%s
+                """, (celular_id,))
+                conn.commit()
+                conn.close()
+                self.cargar_trabajos_celulares_marcas()
+
+    def eliminar_marcas(self):
+        seleccion = self.tree_gesMar.selection()
+        if not seleccion:
+            messagebox.showwarning("Selecciona", "Selecciona un celular")
+            return
+
+        if messagebox.askyesno("Confirmar", "¿Eliminar marca?"):
+            marca_id = self.tree_gesMar.item(seleccion[0])["values"][0]
+
+            conn = conectar()
+            if conn:
+                cursor = conn.cursor()
+                cursor.execute("""
+                    DELETE FROM marcas
+                    WHERE marca_id=%s
+                """, (marca_id,))
+                conn.commit()
+                conn.close()
+                self.cargar_trabajos_celulares_marcas()
 
     def limpiar(self):
         for entry in self.entries.values():
@@ -270,7 +520,7 @@ class TrabajosApp:
             elif isinstance(entry, ttk.Combobox):
                 entry.set("")
 
-    def seleccionar(self, event):
+    def seleccionar_trabajos(self, event):
         seleccion = self.tree_trabajo.selection()
 
         if seleccion:
@@ -283,7 +533,26 @@ class TrabajosApp:
             self.entries["Celular"].set(valores[5])
             self.entries["Cliente"].set(valores[6])
 
-    def obtener_datos(self):
+    def seleccionar_celulares(self, event):
+        seleccion = self.tree_gesCel.selection()
+
+        if seleccion:
+            valores = self.tree_gesCel.item(seleccion[0])["values"]
+            self.limpiar()
+
+            self.entries["Modelo"].insert(0, valores[1])
+            self.entries["Marca"].set(valores[2])
+
+    def seleccionar_marcas(self, event):
+        seleccion = self.tree_gesMar.selection()
+
+        if seleccion:
+            valores = self.tree_gesMar.item(seleccion[0])["values"]
+            self.limpiar()
+
+            self.entries["GesMarca"].insert(0, valores[1])
+
+    def obtener_datos_trabajos(self):
         estado = self.entries["Estado"].get()
         falla = self.entries["Falla"].get("1.0", "end").strip()
         imei = self.entries["IMEI"].get().strip()
@@ -295,3 +564,16 @@ class TrabajosApp:
         cliente_id = self.map_clientes.get(cliente)
 
         return estado, falla, imei, celular_id, cliente_id
+
+    def obtener_datos_celulares(self):
+        modelo = self.entries["Modelo"].get().strip()
+        marca = self.entries["Marca"].get()
+
+        marca_id = self.map_marcas.get(marca)
+
+        return modelo, marca_id
+
+    def obtener_datos_marcas(self):
+        marca = self.entries["GesMarca"].get().strip()
+
+        return marca
