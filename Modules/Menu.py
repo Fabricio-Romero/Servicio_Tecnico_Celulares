@@ -5,9 +5,8 @@ from Modules.AdminUser import AdminUserApp
 from Modules.Customers import ClientesApp
 from Modules.Jobs import TrabajosApp
 from Modules.Movements import MovimientosApp
-# from Modules.Phones import CelularesApp
 from Modules.Products import ProductosApp
-# from Modules.Sales import VentasApp
+from Modules.Sales import VentasApp
 from Modules.Suppliers import ProveedoresApp
 
 
@@ -36,8 +35,8 @@ class MenuApp:
         tk.Button(frame, text="VER CLIENTES", bg="#9C27B0", fg="white",
                   **btn_style, command=self.abrir_clientes).grid(row=3, column=0, pady=15)
 
-        # tk.Button(frame, text="GESTIÓN DE CATEGORIAS", bg="#216EF3", fg="white",
-        #           **btn_style, command=self.abrir_categorias).grid(row=1, column=1, padx=15)
+        tk.Button(frame, text="VENTAS DE TRABAJOS", bg="#216EF3", fg="white",
+                  **btn_style, command=self.abrir_ventas).grid(row=1, column=1, padx=15)
         tk.Button(frame, text="ADMINISTRAR PROVEEDORES", bg="#F32159", fg="white",
                   **btn_style, command=self.abrir_proveedores).grid(row=2, column=1, padx=15)
         tk.Button(frame, text="ADMINISTRAR USUARIOS", bg="#40B027", fg="white",
@@ -58,6 +57,15 @@ class MenuApp:
     #         messagebox.showwarning(
     #             "Acceso denegado", "Solo el admin puede gestionar productos")
 
+    def abrir_movimientos(self):
+        self.nueva_ventana("Movimientos", MovimientosApp, "800x500")
+
+    def abrir_clientes(self):
+        self.nueva_ventana("Reportes", ClientesApp, "800x500")
+
+    def abrir_ventas(self):
+        self.nueva_ventana("Ventas", VentasApp, "1024x500")
+
     def abrir_proveedores(self):
         if self.usuario[4] == "admin" or self.usuario[4] == "super_usuario":  # usuario[4] = rol
             self.nueva_ventana(
@@ -66,12 +74,6 @@ class MenuApp:
         else:
             messagebox.showwarning(
                 "Acceso denegado", "Solo el admin puede gestionar productos")
-
-    def abrir_movimientos(self):
-        self.nueva_ventana("Movimientos", MovimientosApp, "800x500")
-
-    def abrir_clientes(self):
-        self.nueva_ventana("Reportes", ClientesApp, "800x500")
 
     def abrir_admin_usuarios(self):
         if self.usuario[4] == "super_usuario":
