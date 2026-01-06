@@ -21,14 +21,68 @@ class TrabajosApp:
         # Empaqueta notebook dejando 10 pixeles en el eje Y y 20 pixeles en el eje X, rellena en ambos ejes y puede expandirse
         notebook.pack(pady=10, padx=20, fill="both", expand=True)
 
-        # Pestaña 1: Trabajos
+        # Pestaña 1: Ver Trabajos
 
-        # La variable frame1 Crea un frame dentro del notebook
+        # La variable frame1 crea un Frame/Marco dentro del notebook
         frame1 = tk.Frame(notebook)
-        # La variable notebook agrega una pagina que va a contener el frame1 y el texto "Trabajos"
-        notebook.add(frame1, text="Trabajos")
-        # La variable form_frame crea un frame/marco dentro del frame1
-        form_frame = tk.Frame(frame1)
+        # La variable notebook agrega una pagina que va a contener el frame1 y con el texto "Ver Trabajos"
+        notebook.add(frame1, text="Ver Trabajos")
+
+        # Botones
+
+        # La variable btn_frame crea un Frame/Marcp dentro del frame1
+        btn_frame = tk.Frame(frame1)
+        # Empaqueta la variable btn_frame dejando un espacio de 20 pixeles en ambos ejes
+        btn_frame.pack(padx=20, pady=20)
+        # La variable opcion crea un StringVar con el valor "Todos" para controlar la opcion que esta seleccionada en los Radiobuttons
+        self.opcion = tk.StringVar(value="Todos")
+
+        # Crea un Label/Etiqueta dentro del btn_frame con el texto "Filtrar por:", con la fuente en Arial, de tamanio 10 y con la propiedad bold/negrita y utiliza grid para ubicarlo en la fila 0, columna 0
+        tk.Label(btn_frame, text="Filtrar Estado por:", font=(
+            "Arial", 10, "bold")).grid(row=0, column=0, padx=15)
+
+        # Crea un Radiobutton dentro del btn_frame, con el texto "Todos", utiliza la variable opcion para controlar el grupo de Radiobuttons, el valor de este Radiobutton es "Todos", ejecuta la funcion cargar_verTrabajos y luego utiliza grid para ubicarlo en la fila 0, columna 1
+        tk.Radiobutton(btn_frame, text="Todos", variable=self.opcion,
+                       value="Todos", command=self.cargar_verTrabajos).grid(row=0, column=1, padx=15)
+
+        # Crea un Radiobutton dentro del btn_frame con el texto "Pendientes", utiliza la variable opcion para controlar el grupo de Radiobuttons, el valor de este Radiobutton es "Pendiente", ejecuta la funcion cargar_verTrabajos y luego utiliza grid para ubicarlo en la fila 0, columna 2
+        tk.Radiobutton(btn_frame, text="Pendiente", variable=self.opcion, value="Pendiente", command=self.cargar_verTrabajos).grid(
+            row=0, column=2, padx=15)
+
+        # Crea un Radiobutton dentro del btn_frame con el texto "En proceso", utiliza la variable opcion para controlar el grupo de Radiobuttons, el valor de este Radiobutton es "En proceso", ejecuta la funcion cargar_verTrabajos y luego utiliza grid para ubicarlo en la fila 0, columna 3
+        tk.Radiobutton(btn_frame, text="En proceso", variable=self.opcion, value="En proceso", command=self.cargar_verTrabajos).grid(
+            row=0, column=3, padx=15)
+
+        # Crea un Radiobutton dentro del btn_frame con el texto "Listo", utiliza la variable opcion para controlar el grupo de Radiobuttons, el valor de este Radiobutton es "Listo", ejecuta la funcion cargar_verTrabajos y luego utiliza grid para ubicarlo en la fila 0, columna 4
+        tk.Radiobutton(btn_frame, text="Listo", variable=self.opcion,
+                       value="Listo", command=self.cargar_verTrabajos).grid(row=0, column=4, padx=15)
+
+        # Tabla
+
+        self.tree_verTrabajos = ttk.Treeview(  # La variable tree_verTrabajos crea un Treeview
+            frame1,  # Dentro del frame1
+            columns=("Fecha", "Estado", "Falla",  # Con las columnas Fecha, Estado, Falla, IMEI, Celular y Cliente
+                     "IMEI", "Celular", "Cliente"),
+            show="headings"  # Muestra solo las columnas anteriormente mencionadas
+        )
+        # Para col que va a recorrer las columnas del tree_verTrabajos
+        for col in self.tree_verTrabajos["columns"]:
+            # El encabezado del tree_verTrabajos en la columna col se pone el texto col
+            self.tree_verTrabajos.heading(col, text=col)
+            # La columna del tree_verTrabajos en la columna col, tiene un ancho de 200 pixeles y se ancla al centro
+            self.tree_verTrabajos.column(col, width=200, anchor="center")
+
+        # Empaqueta el tree_verTrabajos rellenando ambos ejes, permite expandirse y deja un espacio de 10 pixeles en ambos ejes
+        self.tree_verTrabajos.pack(fill="both", expand=True, padx=10, pady=10)
+
+        # Pestaña 2: Gestion de Trabajos
+
+        # La variable frame2 Crea un frame dentro del notebook
+        frame2 = tk.Frame(notebook)
+        # La variable notebook agrega una pagina que va a contener el frame2 y el texto "Gestion de Trabajos"
+        notebook.add(frame2, text="Gestion de Trabajos")
+        # La variable form_frame crea un frame/marco dentro del frame2
+        form_frame = tk.Frame(frame2)
         # Empaqueta el form_fame con una separacion de 20 pixeles en ambos ejes
         form_frame.pack(padx=20, pady=20)
 
@@ -89,8 +143,8 @@ class TrabajosApp:
 
         # Botones
 
-        # La variable button_frame crea un frame/marco dentro del frame1
-        button_frame = tk.Frame(frame1)
+        # La variable button_frame crea un frame/marco dentro del frame2
+        button_frame = tk.Frame(frame2)
         # Empaqueta la variable button_frame con una separacion de 2 pixeles en ambos ejes
         button_frame.pack(pady=2, padx=2)
 
@@ -133,7 +187,7 @@ class TrabajosApp:
         # Tabla Trabajos
 
         self.tree_trabajo = ttk.Treeview(  # La variable tree_trabajo crea un Treeview (Tabla)
-            frame1,  # Dentro del frame1
+            frame2,  # Dentro del frame2
             columns=("id", "Fecha", "Estado", "Falla",  # Con las columnas id, Fecha, Estado, Falla, IMEI, Celular y Cliente
                      "IMEI", "Celular", "Cliente"),
             show="headings"  # Muestra solo las columnas anteriormente mencionadas
@@ -152,38 +206,38 @@ class TrabajosApp:
         # Empaqueta el tree_trabajo para que rellene ambos ejes, que se pueda expandir y dejando una separacion de 10 pixeles en ambos ejes
         self.tree_trabajo.pack(fill="both", expand=True, padx=10, pady=10)
 
-        # Pestaña 2: Gestionar Celulares y Marcas
+        # Pestaña 3: Gestionar Celulares y Marcas
 
-        # La variable frame2 crea un Frame/marco dentro del notebook
-        frame2 = tk.Frame(notebook)
-        # La variable notebook agrega una pestania dentro del frame2 y con el texto "Gestionar Celulares y Marcas"
-        notebook.add(frame2, text="Gestionar Celulares y Marcas")
+        # La variable frame3 crea un Frame/marco dentro del notebook
+        frame3 = tk.Frame(notebook)
+        # La variable notebook agrega una pestania dentro del frame3 y con el texto "Gestionar Celulares y Marcas"
+        notebook.add(frame3, text="Gestionar Celulares y Marcas")
 
         # Labels y Entries de Gestion de celulares
 
-        # Crea un label dentro del frame2 con el texto "GESTION DE CELULARES" y utiliza grid para ubicarlo en la fila 0, columna 2
-        tk.Label(frame2, text="GESTIÓN DE CELULARES").grid(row=0, column=2)
+        # Crea un label dentro del frame3 con el texto "GESTION DE CELULARES" y utiliza grid para ubicarlo en la fila 0, columna 2
+        tk.Label(frame3, text="GESTIÓN DE CELULARES").grid(row=0, column=2)
 
-        # Crea un label/etiqueta dentro del frame2 con el texto "Modelo:" y utiliza grid/malla para ubicarlo en la fila 1, columna 0
-        tk.Label(frame2, text="Modelo:").grid(row=1, column=0)
-        # Crea la llave "Modelo" en el entries el cual contiene un Entry/entrada dentro del frame2 y con un ancho de 25 pixeles
-        self.entries["Modelo"] = tk.Entry(frame2, width=25)
+        # Crea un label/etiqueta dentro del frame3 con el texto "Modelo:" y utiliza grid/malla para ubicarlo en la fila 1, columna 0
+        tk.Label(frame3, text="Modelo:").grid(row=1, column=0)
+        # Crea la llave "Modelo" en el entries el cual contiene un Entry/entrada dentro del frame3 y con un ancho de 25 pixeles
+        self.entries["Modelo"] = tk.Entry(frame3, width=25)
         # La llave "Modelo" del entries utiliza grid/malla para ubicarlo en la fila 1, columna 1
         self.entries["Modelo"].grid(row=1, column=1)
 
-        # Crea un label/etiqueta dentro del frame2 con el texto "Marca:" Utiliza grid/malla para ubicarlo en la fila 2, columna 0
-        tk.Label(frame2, text="Marca:").grid(row=2, column=0)
+        # Crea un label/etiqueta dentro del frame3 con el texto "Marca:" Utiliza grid/malla para ubicarlo en la fila 2, columna 0
+        tk.Label(frame3, text="Marca:").grid(row=2, column=0)
         self.entries["Marca"] = ttk.Combobox(  # Crea la llave "Marca" en entries el cual contiene un combobox (caja de opciones)
-            # Dentro del frame2, con un ancho de 25 pixeles y el estado en readonly (solo lectura)
-            frame2, width=25, state="readonly")
+            # Dentro del frame3, con un ancho de 25 pixeles y el estado en readonly (solo lectura)
+            frame3, width=25, state="readonly")
         # La llave "Marca" del entriesm utiliza grid/malla para ubicarlo en la fila 2, columna 1
         self.entries["Marca"].grid(row=2, column=1)
 
         # Botones de gestion de celulares
 
         tk.Button(  # Crea un boton
-            # Dentro del frame2, con el texto "AGREGAR", con el fondo de color #6CFF22 y el color de la fuente en azul
-            frame2, text="AGREGAR", bg="#6CFF22", fg="blue",
+            # Dentro del frame3, con el texto "AGREGAR", con el fondo de color #6CFF22 y el color de la fuente en azul
+            frame3, text="AGREGAR", bg="#6CFF22", fg="blue",
             # La fuente va a ser Arial de tamanio 10 y con la propiedad bold/negrita
             font=("Arial", 10, "bold"),
             command=self.agregar_celulares  # Llama a la funcion agregar_celulares
@@ -191,8 +245,8 @@ class TrabajosApp:
         ).grid(row=3, column=0, columnspan=2, padx=5)
 
         tk.Button(  # Crea un boton
-            # Dentro del frame2, con el texto "ACTUALIZAR", con el fondo de color #227EFF y con la fuente de color naranja
-            frame2, text="ACTUALIZAR", bg="#227EFF", fg="orange",
+            # Dentro del frame3, con el texto "ACTUALIZAR", con el fondo de color #227EFF y con la fuente de color naranja
+            frame3, text="ACTUALIZAR", bg="#227EFF", fg="orange",
             # La fuente va a ser Arial de tamanio 10 y con la propiedad bold/negrita
             font=("Arial", 10, "bold"),
             command=self.actualizar_celulares  # Llama a la funcion actualizar_celulares
@@ -200,8 +254,8 @@ class TrabajosApp:
         ).grid(row=4, column=0, columnspan=2, padx=5)
 
         tk.Button(  # Crea un boton
-            # Dentro del frame2, con el texto "ELIMINAR", con el fondo de color #F80000 y con la fuente de color negro
-            frame2, text="ELIMINAR", bg="#F80000", fg="black",
+            # Dentro del frame3, con el texto "ELIMINAR", con el fondo de color #F80000 y con la fuente de color negro
+            frame3, text="ELIMINAR", bg="#F80000", fg="black",
             # La fuente en Arial, de tamanio 10 y con la propiedad bold/negrita
             font=("Arial", 10, "bold"),
             command=self.eliminar_celulares  # Llama a la funcion eliminar_celulares
@@ -209,8 +263,8 @@ class TrabajosApp:
         ).grid(row=5, column=0, columnspan=2, padx=5)
 
         tk.Button(  # Crea un boton
-            # Dentro del frame2, con el texto "LIMPIAR", el fondo de color #00F2FF y con la fuente en color verde
-            frame2, text="LIMPIAR", bg="#00F2FF", fg="green",
+            # Dentro del frame3, con el texto "LIMPIAR", el fondo de color #00F2FF y con la fuente en color verde
+            frame3, text="LIMPIAR", bg="#00F2FF", fg="green",
             # La fuente en Arial, de tamanio 10 y con la propiedad bold/negrita
             font=("Arial", 10, "bold"),
             command=self.limpiar  # Llama a la funcion limpiar
@@ -220,7 +274,7 @@ class TrabajosApp:
         # Tabla de celulares
 
         self.tree_gesCel = ttk.Treeview(  # La variable tree_gesCel crea un Treeview (tabla)
-            frame2,  # Dentro del frame2
+            frame3,  # Dentro del frame3
             # Con las columnas id, Modelo y Marca
             columns=("id", "Modelo", "Marca"),
             show="headings"  # Muestra solo las columnas mencionadas anteriormente
@@ -237,21 +291,21 @@ class TrabajosApp:
 
         # Labels y entries de marcas
 
-        # Crea un label/etiqueta dentro del frame2, con el texto "GESTION DE MARCAS" y utiliza grid/malla para ubicarlo en la fila 0, columna 5
-        tk.Label(frame2, text="GESTIÓN DE MARCAS").grid(row=0, column=5)
+        # Crea un label/etiqueta dentro del frame3, con el texto "GESTION DE MARCAS" y utiliza grid/malla para ubicarlo en la fila 0, columna 5
+        tk.Label(frame3, text="GESTIÓN DE MARCAS").grid(row=0, column=5)
 
-        # Crea un label/etiqueta en el frame2, con el texto "Marca:" y utiliza grid para ubicarlo en la fila 1, columna 3
-        tk.Label(frame2, text="Marca:").grid(row=1, column=3)
-        # Crea la llave GesMarca en entries la cual crea un Entry/entrada dentro del frame2 y con un ancho de 25 pixeles
-        self.entries["GesMarca"] = tk.Entry(frame2, width=25)
+        # Crea un label/etiqueta en el frame3, con el texto "Marca:" y utiliza grid para ubicarlo en la fila 1, columna 3
+        tk.Label(frame3, text="Marca:").grid(row=1, column=3)
+        # Crea la llave GesMarca en entries la cual crea un Entry/entrada dentro del frame3 y con un ancho de 25 pixeles
+        self.entries["GesMarca"] = tk.Entry(frame3, width=25)
         # La llave GesMarca utiliza grid para ubicarlo en la fila 1, columna 4
         self.entries["GesMarca"].grid(row=1, column=4)
 
         # Botones de Marcas
 
         tk.Button(  # Crea un boton
-            # Dentro del frame2, con el texto "AGREGAR", con el fondo #6CFF22 y con la fuente de color azul
-            frame2, text="AGREGAR", bg="#6CFF22", fg="blue",
+            # Dentro del frame3, con el texto "AGREGAR", con el fondo #6CFF22 y con la fuente de color azul
+            frame3, text="AGREGAR", bg="#6CFF22", fg="blue",
             # La fuente va a ser Arial de tamanio 10 y con la propiedad bold/negrita
             font=("Arial", 10, "bold"),
             command=self.agregar_marcas  # Llama a la funcion agregar_marcas
@@ -259,8 +313,8 @@ class TrabajosApp:
         ).grid(row=2, column=3, columnspan=2, padx=5)
 
         tk.Button(  # Crea un boton
-            # Dentro del frame2, con el texto "ACTUALIZAR", el fondo de color #2273FF y con la fuente de color naranja
-            frame2, text="ACTUALIZAR", bg="#227EFF", fg="orange",
+            # Dentro del frame3, con el texto "ACTUALIZAR", el fondo de color #2273FF y con la fuente de color naranja
+            frame3, text="ACTUALIZAR", bg="#227EFF", fg="orange",
             # La fuente va a ser Arial de tamanio 10 y con la propiedad bold/negrita
             font=("Arial", 10, "bold"),
             command=self.actualizar_marcas  # Llama a la funcion actualizar_marcas
@@ -268,8 +322,8 @@ class TrabajosApp:
         ).grid(row=3, column=3, columnspan=2, padx=5)
 
         tk.Button(  # Crea un boton
-            # Dentro del frame2, con el texto "ELIMINAR", con el fondo de color # F80000 y con la fuente de color negro
-            frame2, text="ELIMINAR", bg="#F80000", fg="black",
+            # Dentro del frame3, con el texto "ELIMINAR", con el fondo de color # F80000 y con la fuente de color negro
+            frame3, text="ELIMINAR", bg="#F80000", fg="black",
             # La fuente va a ser Arial de tamanio 10 con la propieda bold/negrita
             font=("Arial", 10, "bold"),
             command=self.eliminar_marcas  # Llama a la funcion eliminar_marcas
@@ -277,8 +331,8 @@ class TrabajosApp:
         ).grid(row=4, column=3, columnspan=2, padx=5)
 
         tk.Button(  # Crea un boton
-            # Dentro del frame2, con el texto "LIMPIAR", con el fondo de color #00F2F y con el color de la fuente de color verde
-            frame2, text="LIMPIAR", bg="#00F2FF", fg="green",
+            # Dentro del frame3, con el texto "LIMPIAR", con el fondo de color #00F2F y con el color de la fuente de color verde
+            frame3, text="LIMPIAR", bg="#00F2FF", fg="green",
             # La fuente va a ser Arial de tamanio 10 con la propiedad bold/negrita
             font=("Arial", 10, "bold"),
             command=self.limpiar  # Llama a la funcion limpiar
@@ -288,7 +342,7 @@ class TrabajosApp:
         # Tabla de Marcas
 
         self.tree_gesMar = ttk.Treeview(  # La variable tree_gesMar crea un Treeview (tabla)
-            frame2,  # Dentro del frame2
+            frame3,  # Dentro del frame3
             columns=("id", "Nombre"),  # Con las columnas id, marca
             show="headings"  # Muestra solo las columnas mencionadas anteriormente
         )
@@ -302,6 +356,7 @@ class TrabajosApp:
                               # Deja un espacio de 10 pixeles en ambos ejes y rellena con 200 pixeles en el eje Y
                               padx=10, pady=10, ipady=200)
 
+        self.cargar_verTrabajos()  # Llama a la funcion cargar_verTrabajos
         self.cargar_celulares()  # Llama a la funcion cargar_celulares
         self.cargar_clientes()  # Llama a la funcion cargar_clientes
         self.cargar_marcas()  # Llama a la funcion cargar_marcas
@@ -314,7 +369,109 @@ class TrabajosApp:
         # Le bindea al treeviewSelect del tree_gesMar la funcion seleccionar_marcas
         self.tree_gesMar.bind("<<TreeviewSelect>>", self.seleccionar_marcas)
 
+    # Crea la funcion cargar_verTrabajos con el atributo self
+    def cargar_verTrabajos(self):
+
+        # Para i que va a recorrer los hijos del tree_verTrabajos
+        for i in self.tree_verTrabajos.get_children():
+            # Elimina le hijo que este en i
+            self.tree_verTrabajos.delete(i)
+
+        # La variable tipo obtiene su valor de la opcion que se seleccione en los Radiobutton
+        tipo = self.opcion.get()
+
+        # La variable conn llama al metodo conectar
+        conn = conectar()
+
+        # Si hay conexion
+        if conn:
+            # La variable cursor llama al metodo cursor de la variable conn
+            cursor = conn.cursor()
+
+            # Pregunta segun la variable tipo
+            match tipo:
+                # En caso de que el valor de la variable tipo sea "Todo"
+                case "Todo":
+
+                    # Consulta tabla trabajos
+
+                    cursor.execute("""
+                        SELECT t.trabajo_id, t.fecha, t.estado, t.descripcion, t.IMEI, CONCAT(ma.nombre, ' ', ce.modelo) AS celular, CONCAT(c.nombre, ' ', c.apellido) AS cliente
+                        FROM trabajos t
+                        JOIN celulares ce ON t.celular_id = ce.celular_id
+                        JOIN marcas ma ON ce.marca_id = ma.marca_id
+                        JOIN clientes c ON t.cliente_id = c.cliente_id
+                        ORDER BY t.fecha DESC
+                    """)
+
+                # En caso de que el valor de la variable tipo sea "Pendiente"
+                case "Pendiente":
+
+                    # Consulta tabla trabajos donde el estado sea "pendiente"
+
+                    cursor.execute("""
+                        SELECT t.trabajo_id, t.fecha, t.estado, t.descripcion, t.IMEI, CONCAT(ma.nombre, ' ', ce.modelo) AS celular, CONCAT(c.nombre, ' ', c.apellido) AS cliente
+                        FROM trabajos t
+                        JOIN celulares ce ON t.celular_id = ce.celular_id
+                        JOIN marcas ma ON ce.marca_id = ma.marca_id
+                        JOIN clientes c ON t.cliente_id = c.cliente_id
+                        WHERE t.estado = "pendiente"
+                        ORDER BY t.fecha DESC
+                    """)
+
+                # En caso de que el valor de la variable tipo sea "En proceso"
+                case "En proceso":
+
+                    # Consulta tabla trabajos donde el estado sea "en proceso"
+
+                    cursor.execute("""
+                        SELECT t.trabajo_id, t.fecha, t.estado, t.descripcion, t.IMEI, CONCAT(ma.nombre, ' ', ce.modelo) AS celular, CONCAT(c.nombre, ' ', c.apellido) AS cliente
+                        FROM trabajos t
+                        JOIN celulares ce ON t.celular_id = ce.celular_id
+                        JOIN marcas ma ON ce.marca_id = ma.marca_id
+                        JOIN clientes c ON t.cliente_id = c.cliente_id
+                        WHERE t.estado = "en proceso"
+                        ORDER BY t.fecha DESC
+                    """)
+
+                # En caso de que el valor de la variable tipo sea "Listo"
+                case "Listo":
+
+                    # Consulta tabla trabajos donde el estado sea "listo"
+
+                    cursor.execute("""
+                        SELECT t.trabajo_id, t.fecha, t.estado, t.descripcion, t.IMEI, CONCAT(ma.nombre, ' ', ce.modelo) AS celular, CONCAT(c.nombre, ' ', c.apellido) AS cliente
+                        FROM trabajos t
+                        JOIN celulares ce ON t.celular_id = ce.celular_id
+                        JOIN marcas ma ON ce.marca_id = ma.marca_id
+                        JOIN clientes c ON t.cliente_id = c.cliente_id
+                        WHERE t.estado = "listo"
+                        ORDER BY t.fecha DESC
+                    """)
+
+                # El caso default
+                case _:
+
+                    # Consutla tabla trabajos
+
+                    cursor.execute("""
+                        SELECT t.trabajo_id, t.fecha, t.estado, t.descripcion, t.IMEI, CONCAT(ma.nombre, ' ', ce.modelo) AS celular, CONCAT(c.nombre, ' ', c.apellido) AS cliente
+                        FROM trabajos t
+                        JOIN celulares ce ON t.celular_id = ce.celular_id
+                        JOIN marcas ma ON ce.marca_id = ma.marca_id
+                        JOIN clientes c ON t.cliente_id = c.cliente_id                        
+                        ORDER BY t.fecha DESC
+                    """)
+
+            # Para row que va a recorrer todo lo que obtenga cursor
+            for row in cursor.fetchall():
+                # Inserta desde el inicio hasta el final los valores de row en el tree_verTrabajos
+                self.tree_verTrabajos.insert("", "end", values=row)
+
+            conn.close()  # Cierra la conexion
+
     # Crea la funcion cargar_celulares con el atrubuto self
+
     def cargar_celulares(self):
 
         conn = conectar()  # La varaible conn hace referencia al metodo conectar

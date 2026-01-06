@@ -129,7 +129,7 @@ class MenuApp:
         else:
             # Muestra un mensaje de advertencia con el titulo "Acceso denegado" y con el mensaje "Solo el admin puede gestionar productos"
             messagebox.showwarning(
-                "Acceso denegado", "Solo el admin puede gestionar productos")
+                "Acceso denegado", "Solo el admin puede gestionar proveedores")
 
     # Crea la funcion abrir_admin_usuarios con el atributo self
     def abrir_admin_usuarios(self):
