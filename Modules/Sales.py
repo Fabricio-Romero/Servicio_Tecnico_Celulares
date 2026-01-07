@@ -30,15 +30,16 @@ class VentasApp:
 
         self.tree_venta = ttk.Treeview(  # La variable tree_venta crea un Treeview
             frame1,  # Dentro del frame1
-            # Con las columnas "Fecha", "Monto", "Celular", "Trabajo" y "Cliente"
-            columns=("Fecha", "Monto", "Celular", "Trabajo", "Cliente"),
+            # Con las columnas "Fecha", "Monto", "Celular", "Trabajo", "Cliente" y "Tipo de Pago"
+            columns=("Fecha", "Monto", "Celular",
+                     "Trabajo", "Cliente", "Tipo de Pago"),
             show="headings"  # Muestra solo las columnas mencionadas anteriormente
         )
         # Para col y texto que van a recorrer el zip
         for col, text in zip(
             self.tree_venta["columns"],  # De las columnas del tree_venta
-            # Las cuales son "Fecha", "Monto", "Celular", "Trabajo" y "Cliente"
-            ["Fecha", "Monto", "Celular", "Trabajo", "Cliente"]
+            # Las cuales son "Fecha", "Monto", "Celular", "Trabajo", "Cliente" y "Tipo de Pago"
+            ["Fecha", "Monto", "Celular", "Trabajo", "Cliente", "Tipo de Pago"]
         ):
             # En el encabezado del tree_venta en la posicion de col pone el texto que tenga text
             self.tree_venta.heading(col, text=text)
@@ -76,10 +77,14 @@ class VentasApp:
             row=0, column=2, sticky="w", pady=2)
         self.entries["Trabajo"] = ttk.Combobox(  # Crea la llave "Trabajo" en entries la cual contiene un Combobox
             # Dentro del form_frame, con un ancho de 75 pixeles y el estado en solo lectura
-            form_frame, width=75, state="readonly")
+            form_frame, width=55, state="readonly")
         self.entries["Trabajo"].grid(  # La llave "Trabajo" del entries utiliza grid/malla
             # Para ubicarlo en la fila 0, columna 3, deja un espacio de 2 pixeles en el eje Y y 5 pixeles en el eje X
             row=0, column=3, pady=2, padx=5)
+
+        tk.Label(form_frame, text="Tipo de Pago:").grid(  # Crea un Label/Etiqueta dentro del form_frame con el texto "Tipo de Pago:"
+            # Utiliza grid para ubicarlo en la fila 0, columna 4, deja un espacio de 2 pixeles en el eje Y y 5 pixeles en el eje X
+            row=0, column=4, pady=2, padx=5)
 
         # Botones
 
@@ -87,6 +92,8 @@ class VentasApp:
         button_frame = tk.Frame(frame2)
         # Empaqueta la variable button_frame dejando un espacio de 2 pixeles en ambos ejes
         button_frame.pack(pady=2, padx=2)
+        # La variable tipo_pago crea un StringVar con el valor "Efectivo" para crear un grupo en los Radiobutton
+        self.tipo_pago = tk.StringVar(value="Efectivo")
 
         tk.Button(  # Crea un boton dentro del button_frame con el texto "Agregar", el fondo de color #6CFF22 y la fuente de color azul
             button_frame, text="AGREGAR", bg="#6CFF22", fg="blue",
@@ -120,19 +127,29 @@ class VentasApp:
             # Utiliza grid para ubicarlo en la fila 0, columna 3 y dejando un espacio de 5 pixeles en el eje X
         ).grid(row=0, column=3, padx=5)
 
+        tk.Radiobutton(form_frame, text="Efectivo", variable=self.tipo_pago,  # Crea un Radiobutton dentro del form_frame con el texto "Efectivo", la variable que utiliza es tipo_pago y el valor es "Efectivo"
+                       # Utiliza grid para ubicarlo en la fila 0, columna 5, deja un espacio de 2 pixeles en el eje Y y 5 pixeles en el eje X
+                       value="Efectivo").grid(row=0, column=5, pady=2, padx=5)
+
+        tk.Radiobutton(form_frame, text="Transferencia", variable=self.tipo_pago,  # Crea un Radiobutton dentro del form_frame con el texto "Transferencia", la variable que utiliza es tipo_pago y el valor es "Transferencia"
+                       # Utiliza grid para ubicarlo en la fila 0, columna 6, deja un espacio de 2 pixeles en el eje Y y 5 pixeles en el eje X
+                       value="Transferencia").grid(row=0, column=6, pady=2, padx=5)
+
         # Tabla de trabajos
 
         self.tree_gesVen = ttk.Treeview(  # La variable tree_gesVen crea un Treeview
             frame2,  # Dentro del frame2
-            # Con las columnas "Id", "Fecha", "Monto", "Celular", "Trabajo" y "Cliente"
-            columns=("Id", "Fecha", "Monto", "Celular", "Trabajo", "Cliente"),
+            # Con las columnas "Id", "Fecha", "Monto", "Celular", "Trabajo", "Cliente" y "Tipo de Pago"
+            columns=("Id", "Fecha", "Monto", "Celular",
+                     "Trabajo", "Cliente", "Tipo de Pago"),
             show="headings"  # Muestra solo las columnas mencionadas anteriormente
         )
         # Para col y text que van a recorrer el zip
         for col, text in zip(
             self.tree_gesVen["columns"],  # De las columnas del tree_gesVen
-            # Las cuales son "Id", "Fecha", "Monto", "Celular", "Trabajo" y "Cliente"
-            ["Id", "Fecha", "Monto", "Celular", "Trabajo", "Cliente"]
+            # Las cuales son "Id", "Fecha", "Monto", "Celular", "Trabajo", "Cliente" y "Tipo de Pago"
+            ["Id", "Fecha", "Monto", "Celular",
+                "Trabajo", "Cliente", "Tipo de Pago"]
         ):
             # Muestra en el encabezado del tree_gesVen en la posicion de col el texto que obtenga text
             self.tree_gesVen.heading(col, text=text)
@@ -168,7 +185,7 @@ class VentasApp:
         # Consulta tabla ventas
 
         cursor.execute("""
-            SELECT v.fecha, v.monto, CONCAT(ma.nombre, " ", ce.modelo), t.descripcion, CONCAT(c.nombre, " ", c.apellido)
+            SELECT v.fecha, v.monto, CONCAT(ma.nombre, " ", ce.modelo), t.descripcion, CONCAT(c.nombre, " ", c.apellido), v.tipo_pago
             FROM ventas v
             JOIN trabajos t ON t.trabajo_id = v.trabajo_id
             JOIN celulares ce ON ce.celular_id = t.celular_id
@@ -192,7 +209,7 @@ class VentasApp:
         # Consulta tabla ventas
 
         cursor.execute("""
-            SELECT v.venta_id, v.fecha, v.monto, CONCAT(ma.nombre, " ", ce.modelo), t.descripcion, CONCAT(c.nombre, " ", c.apellido)
+            SELECT v.venta_id, v.fecha, v.monto, CONCAT(ma.nombre, " ", ce.modelo), t.descripcion, CONCAT(c.nombre, " ", c.apellido), v.tipo_pago
             FROM ventas v
             JOIN trabajos t ON t.trabajo_id = v.trabajo_id
             JOIN celulares ce ON ce.celular_id = t.celular_id
@@ -261,19 +278,27 @@ class VentasApp:
             # En la llave "Trabajo" del entries pone la variable texto_trabajo
             self.entries["Trabajo"].set(texto_trabajo)
 
+            # La variable texto_pago convierte el valor de la posicion 6 de la variable valores en capital para que devuelva "Efectivo" en vez de "efectivo"
+            texto_pago = valores[6].capitalize()
+            # Se establece el valor de la variable tipo_pago en lo que contenga texto_pago
+            self.tipo_pago.set(texto_pago)
+
     # Crea la funcion obtener_datos con al tributo self
     def obtener_datos(self):
         # La variable monto obtiene su valor de la llave "Monto" del diccionario entries
         monto = self.entries["Monto"].get()
         # La variable trabajo obtiene su valor de la llave "Trabajo" del diccionario entries
         trabajo = self.entries["Trabajo"].get()
+        # La variable pago obtiene su valor de la variable tipo_pago
+        pago = self.tipo_pago.get()
 
         # Convertir texto → ID
 
         # La variable trabajo_id y cliente_id obtienen su valor de la llave trabajo del diccionario map_trabajos
         trabajo_id, cliente_id = self.map_trabajos.get(trabajo, (None, None))
 
-        return monto, trabajo_id, cliente_id  # Devuelve monto, trabajo_id y cliente_id
+        # Devuelve monto, trabajo_id, cliente_id y pago
+        return monto, trabajo_id, cliente_id, pago
 
     # Crea la funcion limpiar del atributo self
     def limpiar(self):
@@ -311,8 +336,8 @@ class VentasApp:
             # Insertar datos en la tabla ventas
 
             cursor.execute("""
-                INSERT INTO ventas (monto, trabajo_id, cliente_id)
-                VALUES (%s, %s, %s)
+                INSERT INTO ventas (monto, trabajo_id, cliente_id, tipo_pago)
+                VALUES (%s, %s, %s, %s)
             """, (*datos,))  # Separa los valores de la variable datos utilizando coma
 
             conn.commit()  # Termina de ejcutar el insert
@@ -355,7 +380,7 @@ class VentasApp:
             # Actualizar datos tabla ventas
 
             cursor.execute("""
-                UPDATE ventas SET monto=%s, trabajo_id=%s, cliente_id=%s
+                UPDATE ventas SET monto=%s, trabajo_id=%s, cliente_id=%s, tipo_pago=%s
                 WHERE venta_id=%s
             """, (*datos, venta_id))  # Separa la variable datos y luego utiliza venta_id
 
