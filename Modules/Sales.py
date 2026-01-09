@@ -182,25 +182,6 @@ class VentasApp:
         for i in self.tree_venta.get_children():
             self.tree_venta.delete(i)  # Elimina el hijo que este en i
 
-        # Consulta tabla ventas
-
-        cursor.execute("""
-            SELECT v.fecha, v.monto, CONCAT(ma.nombre, " ", ce.modelo), t.descripcion, CONCAT(c.nombre, " ", c.apellido), v.tipo_pago
-            FROM ventas v
-            JOIN trabajos t ON t.trabajo_id = v.trabajo_id
-            JOIN celulares ce ON ce.celular_id = t.celular_id
-            JOIN marcas ma ON ma.marca_id = ce.marca_id
-            JOIN clientes c ON c.cliente_id = v.cliente_id
-            ORDER BY v.fecha DESC
-        """)
-
-        # Para row que reccorre todo lo que obtenga cursor
-        for row in cursor.fetchall():
-            # Inserta el en tree_venta los datos que obtenga row desde el inicio hasta el final
-            self.tree_venta.insert("", "end", values=row)
-
-        # Gestionar Ventas
-
         # Para i que va a recorrer los hijos del tree_gesVen
         for i in self.tree_gesVen.get_children():
             # Elimina el hijo del tree_gesVen que este en i
@@ -218,8 +199,10 @@ class VentasApp:
             ORDER BY v.fecha DESC
         """)
 
-        # Para row que va a recorrer todo lo que obtenga cursor
+        # Para row que reccorre todo lo que obtenga cursor
         for row in cursor.fetchall():
+            # Inserta el en tree_venta los datos que obtenga row desde el indice 1 hasta el final
+            self.tree_venta.insert("", "end", values=row[1:])
             # Inserta los valores de row desde el inicio hasta el final en el tree_gesVen
             self.tree_gesVen.insert("", "end", values=row)
 
@@ -308,12 +291,12 @@ class VentasApp:
             if isinstance(entry, tk.Entry):
                 # Elimina el valor que tenga desde el inicio hasta el final
                 entry.delete(0, "end")
-            # Si no pasa eso, pero hay una instancia dentro de entry que sea de tipo Text
-            elif isinstance(entry, tk.Text):
+            # Si hay una instancia dentro de entry que sea de tipo Text
+            if isinstance(entry, tk.Text):
                 # Elimina desde el inicio hasta el final el valor que contenga
                 entry.delete("1.0", "end")
-            # Si no pasa eso, pero hay una instancia dentro de entry que sea de tipo Combobox
-            elif isinstance(entry, ttk.Combobox):
+            # Si hay una instancia dentro de entry que sea de tipo Combobox
+            if isinstance(entry, ttk.Combobox):
                 entry.set("")  # Establece el valor en "" (osea vacio)
 
     # Crea la funcion agregar_ventas con al tributo self

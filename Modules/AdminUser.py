@@ -58,6 +58,7 @@ class AdminUserApp:
             self.entries[campo].grid(row=i, column=1, pady=2, padx=5)
 
         # Botones
+
         # Si no es_super_user (osea falso)
         if not self.es_super_user:
             # Crea un boton en el btn_frame con el texto "Agregar", en estado deshabilitado con fondo negro y utiliza pack para posicionarlo al lado izquierdo y con 5 pixeles de separacion en el eje X
@@ -159,10 +160,10 @@ class AdminUserApp:
             self.entries["Nombre"].insert(0, valores[1])
             # Inserta al incio el dato en la posicion 2 del arreglo valores en la llave del entries "Apellido"
             self.entries["Apellido"].insert(0, valores[2])
-            # Inserta al incio el dato en la posicion 3 del arreglo valores en la llave del entries "Apellido"
+            # Inserta al incio el dato en la posicion 3 del arreglo valores en la llave del entries "Email"
             self.entries["Email"].insert(0, valores[3])
-            # Inserta al incio el dato en la posicion 4 del arreglo valores en la llave del entries "Apellido"
-            self.entries["Rol"].insert(0, valores[4])
+            # Inserta al incio el dato en la posicion 4 del arreglo valores en la llave del entries "Rol"
+            self.entries["Rol"].set(valores[4])
 
     # Crea la funcion obtener_datos con el atributo self
     def obtener_datos(self):
@@ -196,7 +197,7 @@ class AdminUserApp:
                 entry.delete(0, "end")
 
             # Si No pasa eso pero hay una instancia en el entry de tipo ttk Combobox
-            elif isinstance(entry, ttk.Combobox):
+            if isinstance(entry, ttk.Combobox):
                 # Llama a la funcion set/establecer que establece el dato como "" (osea vacio)
                 entry.set("")
 

@@ -91,15 +91,6 @@ class MenuApp:
         # Llama a la funcion nueva_ventana pasando los parametros "Trabajos", la clase TrabajosApp, "1366x720"
         self.nueva_ventana("Trabajos", TrabajosApp, "1366x720")
 
-    # Lo dejo para ver como es para los usuarios admin y super_usuario
-    # def abrir_categorias(self):
-    #     if self.usuario[4] == "admin" or self.usuario[4] == "super_usuario":  # usuario[4] = rol
-    #         self.nueva_ventana(
-    #             "Categorias", lambda root: CategoriasApp(root, es_admin=True))
-    #     else:
-    #         messagebox.showwarning(
-    #             "Acceso denegado", "Solo el admin puede gestionar productos")
-
     # Crea la funcion abrir_movimientos con el atributo self
     def abrir_movimientos(self):
         # Llama a la funcion nueva_ventana pasando los parametros "Movimientos", la clase MovimientosApp, "800x500"

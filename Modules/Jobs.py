@@ -6,6 +6,8 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 # Desde la carpeta Database y el archivo db_connection importa el metodo conectar
 from Database.db_connection import conectar
+# Desde la carpeta Modules importa el archivo Phones se importa la clase CelularesApp
+from Modules.Phones import CelularesApp
 
 # Crea la calse TrabajosApp
 
@@ -89,57 +91,45 @@ class TrabajosApp:
         # Labels y Entries
 
         self.entries = {}  # Crea el diccionario entries
+        # Crea el arreglo campos que guarda el texto y las llaves de los labels y entries
+        campos = ["Estado", "Falla", "IMEI", "Celular", "Cliente"]
 
-        tk.Label(form_frame, text="Estado:").grid(  # Crea un label/etiqueta dentro del form_frame con el texto "Estado:"
-            # Utiliza grid/malla para ubicarlo en la fila 0, columan 2, posicionarlo lo mas al west/oeste (izquierda) posible y deja una separacion de 2 pixeles en el eje y
-            row=0, column=2, sticky="w", pady=2)
-        self.entries["Estado"] = ttk.Combobox(form_frame, width=25,  # Crea la llave "Estado" dentro del entries el cual va a contener un combobox dentro del form_frame con un ancho de 25 pixeles
-                                              # Con los valores "listo", "pendiente", "en proceso" y tiene el estado en solo lectura
-                                              values=["listo", "pendiente", "en proceso"], state="readonly")
-        self.entries["Estado"].grid(  # Utiliza grid/malla en la llave "Estado" del entries
-            # Lo ubica en la fila 0, columna 3, con una separacion de 2 pixeles en el eje Y y 5 Pixeles en el eje X
-            row=0, column=3, pady=2, padx=5)
-        # Establece la llave "Estado" del entries en "pendiente" de manera predeterminada
+        # i y campo que van a recorrer la enumeracion del arreglo campos
+        for i, campo in enumerate(campos):
+            # i contiene numeros impares (donde van a ir los Labels)
+            i += i + 1
+            j = i + 1  # j tiene los numeros pares (donde van a ir los Entries)
+
+            # Crea un Label/Etiqueta dentro del form_frame con el texto que contenga campo mas ":"
+            tk.Label(form_frame, text=campo + ":").grid(row=0,
+                                                        # Utiliza grid para ubicarlo en la fila 0, columna i, lo posiciona lo mas al west/oeste (izquierda) posible, deja un espacio de 2 pixeles en el eje Y
+                                                        column=i, sticky="w", pady=2)
+
+            # en "Falla" de campo
+            if campo in ["Falla"]:
+                # La llave campo del entries contiene un Text/Texto dentro del from_frame con un ancho de 25 pixeles y una altura de 3 caracteres
+                self.entries[campo] = tk.Text(form_frame, width=25, height=3)
+                self.entries[campo].grid(
+                    # Utiliza grid para ubicarlo en la fila 0, columna j, deja un espacio de 2 pixeles en el eje Y y 5 pixeles en el eje X, ocupa 3 filas
+                    row=0, column=j, pady=2, padx=5, rowspan=3)
+            # Si no pasa eso, pero en "IMEI" de campo
+            elif campo in ["IMEI"]:
+                # La llave campo del entries crea un Entry dentro del form_frame con un ancho de 25 pixeles
+                self.entries[campo] = tk.Entry(form_frame, width=25)
+                # Utiliza grid para ubicarlo en la fila 0, columna j, deja un espacio de 2 pixeles en el eje Y y 5 pixeles en el eje X
+                self.entries[campo].grid(row=0, column=j, pady=2, padx=5)
+            # Si no
+            else:
+                # En la llave campo del entries crea un Combobox dentro del form_frame, con un ancho de 25 pixeles y el estado en solo lectura
+                self.entries[campo] = ttk.Combobox(
+                    form_frame, width=25, state="readonly")
+                # Utiliza grid para ubicarlo en la fila 0, columna j, deja un espacio de 2 pixeles en el eje Y Y 5 pixeles en el eje X
+                self.entries[campo].grid(row=0, column=j, pady=2, padx=5)
+
+        # Los valores del entries "Estado" son "listo", "pendiente" y "en proceso"
+        self.entries["Estado"]["values"] = ["listo", "pendiente", "en proceso"]
+        # Establece el valor por defecto en "pendiente"
         self.entries["Estado"].set("pendiente")
-
-        tk.Label(form_frame, text="Falla:").grid(  # Crea un label/etiqueta dentro del form_form, con el texto "Falla:"
-            # Utiliza grid para ubicarlo en la fila 0, columna 4, la va a posicionar lo mas al west/oeste (izquierda) posible y con una separacion de 2 pixeles en el eje Y
-            row=0, column=4, sticky="w", pady=2)
-        self.entries["Falla"] = tk.Text(  # Crea la llave "Falla" en entries, la cual va a tener un Text/texto
-            # Dentro del form_frame, con un ancho de 25 pixeles y 3 pixeles de alto
-            form_frame, width=25, height=3)
-        self.entries["Falla"].grid(  # La llave "Falla" utiliza grid
-            # Para ubicarlo en la fila 0, columna 5, con una separacion de 2 pixeles en el eje Y y 5 pixeles en el eje X y ocupa 3 filas
-            row=0, column=5, pady=2, padx=5, rowspan=3)
-
-        tk.Label(form_frame, text="IMEI:").grid(  # Crea un label/etiqueta dentro del form_frame, con el texto "IMEI:"
-            # Utiliza grid para ubicarlo en la fila 0, columna 6, lo posiciona lo mas al west/oeste (izquierda) posible y dejando una separacion de 2 pixeles en el eje Y
-            row=0, column=6, sticky="w", pady=2)
-        # Crea la llave "IMEI" en entries el cual contiene un Entry/entrada dentro del form_frame y con un ancho de 25 pixeles
-        self.entries["IMEI"] = tk.Entry(form_frame, width=25)
-        self.entries["IMEI"].grid(  # La llave "IMEI" utiliza grid
-            # Para ubicarlo en la fila 0, columna 7, dejando una separacion de 2 pixeles en el eje Y y 5 pixeles en el eje X
-            row=0, column=7, pady=2, padx=5)
-
-        tk.Label(form_frame, text="Celular:").grid(  # Crea un label/etiqueta dentro del form_frame, con el texto "Celular:"
-            # Utiliza grid para ubicarlo en la fila 0, columna 8, posicionarlo lo mas al west/oeste (izquierda) posible y con una separacion de 2 pixeles en el eje Y
-            row=0, column=8, sticky="w", pady=2)
-        self.entries["Celular"] = ttk.Combobox(  # Crea la llave "Celular" en entries el cual contiene un Combobox (caja de opciones)
-            # Dentro del form_frame, con un ancho de 25 pixeles y lo pone en estado "readonly" (solo lectura)
-            form_frame, width=25, state="readonly")
-        self.entries["Celular"].grid(  # La llave "Celular" utiliza grid
-            # Lo ubica en la fila 0, columna 9, con una separacion de 2 pixeles en eje Y y 5 pixeles en el eje X
-            row=0, column=9, pady=2, padx=5)
-
-        tk.Label(form_frame, text="Cliente:").grid(  # Crea un label/etiqueta dentro del form_frame, com el texto "Cliente:"
-            # Utiliza grid para unicarlo en la fila 0, columna 10, lo posiciona lo mas al west/oeste (izquierda) posible y deja una separacion de 2 pixeles en el eje Y
-            row=0, column=10, sticky="w", pady=2)
-        self.entries["Cliente"] = ttk.Combobox(  # Crea la llave "Cliente" la cual crea un combobox (caja de opciones)
-            # Dentro del form_frame, con un ancho de 25 pixeles y con estado en readonly (solo lectura)
-            form_frame, width=25, state="readonly")
-        self.entries["Cliente"].grid(  # La llave "Cliente" utiliza grid/malla
-            # Lo ubica en la fila 0, columna 11, dejando una separacion de 2 pixeles en el eje Y y 5 pixeles en el eje X
-            row=0, column=11, pady=2, padx=5)
 
         # Botones
 
@@ -208,166 +198,16 @@ class TrabajosApp:
 
         # Pestaña 3: Gestionar Celulares y Marcas
 
-        # La variable frame3 crea un Frame/marco dentro del notebook
-        frame3 = tk.Frame(notebook)
-        # La variable notebook agrega una pestania dentro del frame3 y con el texto "Gestionar Celulares y Marcas"
-        notebook.add(frame3, text="Gestionar Celulares y Marcas")
-
-        # Labels y Entries de Gestion de celulares
-
-        # Crea un label dentro del frame3 con el texto "GESTION DE CELULARES" y utiliza grid para ubicarlo en la fila 0, columna 2
-        tk.Label(frame3, text="GESTIÓN DE CELULARES").grid(row=0, column=2)
-
-        # Crea un label/etiqueta dentro del frame3 con el texto "Modelo:" y utiliza grid/malla para ubicarlo en la fila 1, columna 0
-        tk.Label(frame3, text="Modelo:").grid(row=1, column=0)
-        # Crea la llave "Modelo" en el entries el cual contiene un Entry/entrada dentro del frame3 y con un ancho de 25 pixeles
-        self.entries["Modelo"] = tk.Entry(frame3, width=25)
-        # La llave "Modelo" del entries utiliza grid/malla para ubicarlo en la fila 1, columna 1
-        self.entries["Modelo"].grid(row=1, column=1)
-
-        # Crea un label/etiqueta dentro del frame3 con el texto "Marca:" Utiliza grid/malla para ubicarlo en la fila 2, columna 0
-        tk.Label(frame3, text="Marca:").grid(row=2, column=0)
-        self.entries["Marca"] = ttk.Combobox(  # Crea la llave "Marca" en entries el cual contiene un combobox (caja de opciones)
-            # Dentro del frame3, con un ancho de 25 pixeles y el estado en readonly (solo lectura)
-            frame3, width=25, state="readonly")
-        # La llave "Marca" del entriesm utiliza grid/malla para ubicarlo en la fila 2, columna 1
-        self.entries["Marca"].grid(row=2, column=1)
-
-        # Botones de gestion de celulares
-
-        tk.Button(  # Crea un boton
-            # Dentro del frame3, con el texto "AGREGAR", con el fondo de color #6CFF22 y el color de la fuente en azul
-            frame3, text="AGREGAR", bg="#6CFF22", fg="blue",
-            # La fuente va a ser Arial de tamanio 10 y con la propiedad bold/negrita
-            font=("Arial", 10, "bold"),
-            command=self.agregar_celulares  # Llama a la funcion agregar_celulares
-            # Utiliza grid/malla para ubicarlo en la fila 3, columna 0, ocupa 2 columnas y deja un espacio de 5 pixeles en el eje X
-        ).grid(row=3, column=0, columnspan=2, padx=5)
-
-        tk.Button(  # Crea un boton
-            # Dentro del frame3, con el texto "ACTUALIZAR", con el fondo de color #227EFF y con la fuente de color naranja
-            frame3, text="ACTUALIZAR", bg="#227EFF", fg="orange",
-            # La fuente va a ser Arial de tamanio 10 y con la propiedad bold/negrita
-            font=("Arial", 10, "bold"),
-            command=self.actualizar_celulares  # Llama a la funcion actualizar_celulares
-            # Utiliza grid/malla para ubicarlo en la fila 4, columna 0, ocupa 2 columnas y deja un espacio de 5 pixeles en el eje X
-        ).grid(row=4, column=0, columnspan=2, padx=5)
-
-        tk.Button(  # Crea un boton
-            # Dentro del frame3, con el texto "ELIMINAR", con el fondo de color #F80000 y con la fuente de color negro
-            frame3, text="ELIMINAR", bg="#F80000", fg="black",
-            # La fuente en Arial, de tamanio 10 y con la propiedad bold/negrita
-            font=("Arial", 10, "bold"),
-            command=self.eliminar_celulares  # Llama a la funcion eliminar_celulares
-            # Utiliza grid/malla para ubicarlo en la fila 5, columna 0, ocupa 2 columnas y deja un espacio de 5 pixeles en el eje X
-        ).grid(row=5, column=0, columnspan=2, padx=5)
-
-        tk.Button(  # Crea un boton
-            # Dentro del frame3, con el texto "LIMPIAR", el fondo de color #00F2FF y con la fuente en color verde
-            frame3, text="LIMPIAR", bg="#00F2FF", fg="green",
-            # La fuente en Arial, de tamanio 10 y con la propiedad bold/negrita
-            font=("Arial", 10, "bold"),
-            command=self.limpiar  # Llama a la funcion limpiar
-            # Utiliza grid para ubicarlo en la fila 6, columna 0, ocupa 2 columnas y deja un espacio de 5 pixeles en el eje X
-        ).grid(row=6, column=0, columnspan=2, padx=5)
-
-        # Tabla de celulares
-
-        self.tree_gesCel = ttk.Treeview(  # La variable tree_gesCel crea un Treeview (tabla)
-            frame3,  # Dentro del frame3
-            # Con las columnas id, Modelo y Marca
-            columns=("id", "Modelo", "Marca"),
-            show="headings"  # Muestra solo las columnas mencionadas anteriormente
-        )
-        # col va a recorrer las columnas de la variable tree_gesCli
-        for col in self.tree_gesCel["columns"]:
-            # El encabezado del tree_gesCli va a estar en la posicion col y con el texto col
-            self.tree_gesCel.heading(col, text=col)
-            # Las columnas del tree_gesCli va a estar en la posicion col, con un ancho de 150 pixeles y va a estar anclado al centro
-            self.tree_gesCel.column(col, width=150, anchor="center")
-        self.tree_gesCel.grid(row=1, column=2, rowspan=6,  # Utiliza grid/malla para ubicarlo en la fila 1, columna 2, ocupa 6 filas
-                              # Deja un espacio de 10 pixeles en ambos ejes y rellena con 200 pixeles en el eje Y
-                              padx=10, pady=10, ipady=200)
-
-        # Labels y entries de marcas
-
-        # Crea un label/etiqueta dentro del frame3, con el texto "GESTION DE MARCAS" y utiliza grid/malla para ubicarlo en la fila 0, columna 5
-        tk.Label(frame3, text="GESTIÓN DE MARCAS").grid(row=0, column=5)
-
-        # Crea un label/etiqueta en el frame3, con el texto "Marca:" y utiliza grid para ubicarlo en la fila 1, columna 3
-        tk.Label(frame3, text="Marca:").grid(row=1, column=3)
-        # Crea la llave GesMarca en entries la cual crea un Entry/entrada dentro del frame3 y con un ancho de 25 pixeles
-        self.entries["GesMarca"] = tk.Entry(frame3, width=25)
-        # La llave GesMarca utiliza grid para ubicarlo en la fila 1, columna 4
-        self.entries["GesMarca"].grid(row=1, column=4)
-
-        # Botones de Marcas
-
-        tk.Button(  # Crea un boton
-            # Dentro del frame3, con el texto "AGREGAR", con el fondo #6CFF22 y con la fuente de color azul
-            frame3, text="AGREGAR", bg="#6CFF22", fg="blue",
-            # La fuente va a ser Arial de tamanio 10 y con la propiedad bold/negrita
-            font=("Arial", 10, "bold"),
-            command=self.agregar_marcas  # Llama a la funcion agregar_marcas
-            # Utiliza grid/malla para ubicarlo en la fila 2, columna 3, ocupa 2 columnas y deja un espacio de 5 pixeles en el eje X
-        ).grid(row=2, column=3, columnspan=2, padx=5)
-
-        tk.Button(  # Crea un boton
-            # Dentro del frame3, con el texto "ACTUALIZAR", el fondo de color #2273FF y con la fuente de color naranja
-            frame3, text="ACTUALIZAR", bg="#227EFF", fg="orange",
-            # La fuente va a ser Arial de tamanio 10 y con la propiedad bold/negrita
-            font=("Arial", 10, "bold"),
-            command=self.actualizar_marcas  # Llama a la funcion actualizar_marcas
-            # Utiliza grid para ubicarlo en la fila 2, columna 3, ocupa 2 columnas y deja un espacio de 5 pixeles en el eje X
-        ).grid(row=3, column=3, columnspan=2, padx=5)
-
-        tk.Button(  # Crea un boton
-            # Dentro del frame3, con el texto "ELIMINAR", con el fondo de color # F80000 y con la fuente de color negro
-            frame3, text="ELIMINAR", bg="#F80000", fg="black",
-            # La fuente va a ser Arial de tamanio 10 con la propieda bold/negrita
-            font=("Arial", 10, "bold"),
-            command=self.eliminar_marcas  # Llama a la funcion eliminar_marcas
-            # Utiliza grid para ubicarlo en la fila 4, columna 3, ocupa 2 columnas y deja un espacio de 5 pixeles en eje X
-        ).grid(row=4, column=3, columnspan=2, padx=5)
-
-        tk.Button(  # Crea un boton
-            # Dentro del frame3, con el texto "LIMPIAR", con el fondo de color #00F2F y con el color de la fuente de color verde
-            frame3, text="LIMPIAR", bg="#00F2FF", fg="green",
-            # La fuente va a ser Arial de tamanio 10 con la propiedad bold/negrita
-            font=("Arial", 10, "bold"),
-            command=self.limpiar  # Llama a la funcion limpiar
-            # Utiliza grid/malla para ubicarlo en la fila 5, columna 3, ocupa 2 columnas y deja un espacio de 4 pixeles en el eje X
-        ).grid(row=5, column=3, columnspan=2, padx=5)
-
-        # Tabla de Marcas
-
-        self.tree_gesMar = ttk.Treeview(  # La variable tree_gesMar crea un Treeview (tabla)
-            frame3,  # Dentro del frame3
-            columns=("id", "Nombre"),  # Con las columnas id, marca
-            show="headings"  # Muestra solo las columnas mencionadas anteriormente
-        )
-        # Para col que va a recorrer las columnas del tree_gesMar
-        for col in self.tree_gesMar["columns"]:
-            # En el encabezado del tree_gesMar en la posicion col, se va a poner el texto col
-            self.tree_gesMar.heading(col, text=col)
-            # Las columnas del tree_gesMar en la posicion col, van a tener un ancho de 150 pixeles y van a estar anclado al centro
-            self.tree_gesMar.column(col, width=150, anchor="center")
-        self.tree_gesMar.grid(row=1, column=5, rowspan=6,  # Utiliza grid para ubicarlo en la fila 1, columna 5, ocupa 6 filas
-                              # Deja un espacio de 10 pixeles en ambos ejes y rellena con 200 pixeles en el eje Y
-                              padx=10, pady=10, ipady=200)
+        # Llama a la clase CelularesApp y le pasa el parametro notebook
+        CelularesApp(notebook)
 
         self.cargar_verTrabajos()  # Llama a la funcion cargar_verTrabajos
         self.cargar_celulares()  # Llama a la funcion cargar_celulares
         self.cargar_clientes()  # Llama a la funcion cargar_clientes
-        self.cargar_marcas()  # Llama a la funcion cargar_marcas
-        # Llama a la funcion cargar_trabajos_celulares_marcas
-        self.cargar_trabajos_celulares_marcas()
+        # Llama a la funcion cargar_trabajos
+        self.cargar_trabajos()
         # Le bindea al TreeviewSelect del tree_trabajo la funcion seleccionar_trabajos
         self.tree_trabajo.bind("<<TreeviewSelect>>", self.seleccionar_trabajos)
-        # Le bindea al TreeviewSelect del tree_gesCel la funcion seleccionar_celulares
-        self.tree_gesCel.bind("<<TreeviewSelect>>", self.seleccionar_celulares)
-        # Le bindea al treeviewSelect del tree_gesMar la funcion seleccionar_marcas
-        self.tree_gesMar.bind("<<TreeviewSelect>>", self.seleccionar_marcas)
 
     # Crea la funcion cargar_verTrabajos con el atributo self
     def cargar_verTrabajos(self):
@@ -377,8 +217,8 @@ class TrabajosApp:
             # Elimina le hijo que este en i
             self.tree_verTrabajos.delete(i)
 
-        # La variable tipo obtiene su valor de la opcion que se seleccione en los Radiobutton
-        tipo = self.opcion.get()
+        # La variable tipo obtiene su valor de la opcion que se seleccione en los Radiobutton y los pone en minusculas
+        tipo = self.opcion.get().lower()
 
         # La variable conn llama al metodo conectar
         conn = conectar()
@@ -388,80 +228,31 @@ class TrabajosApp:
             # La variable cursor llama al metodo cursor de la variable conn
             cursor = conn.cursor()
 
-            # Pregunta segun la variable tipo
-            match tipo:
-                # En caso de que el valor de la variable tipo sea "Todo"
-                case "Todo":
+            # Si la variable tipo es igual a "todos"
+            if tipo == "todos":
+                # Consulta tabla trabajos
 
-                    # Consulta tabla trabajos
+                cursor.execute("""
+                    SELECT t.trabajo_id, t.fecha, t.estado, t.descripcion, t.IMEI, CONCAT(ma.nombre, ' ', ce.modelo) AS celular, CONCAT(c.nombre, ' ', c.apellido) AS cliente
+                    FROM trabajos t
+                    JOIN celulares ce ON t.celular_id = ce.celular_id
+                    JOIN marcas ma ON ce.marca_id = ma.marca_id
+                    JOIN clientes c ON t.cliente_id = c.cliente_id
+                    ORDER BY t.fecha DESC
+                """)
+            # Si no
+            else:
 
-                    cursor.execute("""
+                # Consulta tabla trabajos con where
+                cursor.execute("""
                         SELECT t.trabajo_id, t.fecha, t.estado, t.descripcion, t.IMEI, CONCAT(ma.nombre, ' ', ce.modelo) AS celular, CONCAT(c.nombre, ' ', c.apellido) AS cliente
                         FROM trabajos t
                         JOIN celulares ce ON t.celular_id = ce.celular_id
                         JOIN marcas ma ON ce.marca_id = ma.marca_id
                         JOIN clientes c ON t.cliente_id = c.cliente_id
+                        WHERE t.estado = %s
                         ORDER BY t.fecha DESC
-                    """)
-
-                # En caso de que el valor de la variable tipo sea "Pendiente"
-                case "Pendiente":
-
-                    # Consulta tabla trabajos donde el estado sea "pendiente"
-
-                    cursor.execute("""
-                        SELECT t.trabajo_id, t.fecha, t.estado, t.descripcion, t.IMEI, CONCAT(ma.nombre, ' ', ce.modelo) AS celular, CONCAT(c.nombre, ' ', c.apellido) AS cliente
-                        FROM trabajos t
-                        JOIN celulares ce ON t.celular_id = ce.celular_id
-                        JOIN marcas ma ON ce.marca_id = ma.marca_id
-                        JOIN clientes c ON t.cliente_id = c.cliente_id
-                        WHERE t.estado = "pendiente"
-                        ORDER BY t.fecha DESC
-                    """)
-
-                # En caso de que el valor de la variable tipo sea "En proceso"
-                case "En proceso":
-
-                    # Consulta tabla trabajos donde el estado sea "en proceso"
-
-                    cursor.execute("""
-                        SELECT t.trabajo_id, t.fecha, t.estado, t.descripcion, t.IMEI, CONCAT(ma.nombre, ' ', ce.modelo) AS celular, CONCAT(c.nombre, ' ', c.apellido) AS cliente
-                        FROM trabajos t
-                        JOIN celulares ce ON t.celular_id = ce.celular_id
-                        JOIN marcas ma ON ce.marca_id = ma.marca_id
-                        JOIN clientes c ON t.cliente_id = c.cliente_id
-                        WHERE t.estado = "en proceso"
-                        ORDER BY t.fecha DESC
-                    """)
-
-                # En caso de que el valor de la variable tipo sea "Listo"
-                case "Listo":
-
-                    # Consulta tabla trabajos donde el estado sea "listo"
-
-                    cursor.execute("""
-                        SELECT t.trabajo_id, t.fecha, t.estado, t.descripcion, t.IMEI, CONCAT(ma.nombre, ' ', ce.modelo) AS celular, CONCAT(c.nombre, ' ', c.apellido) AS cliente
-                        FROM trabajos t
-                        JOIN celulares ce ON t.celular_id = ce.celular_id
-                        JOIN marcas ma ON ce.marca_id = ma.marca_id
-                        JOIN clientes c ON t.cliente_id = c.cliente_id
-                        WHERE t.estado = "listo"
-                        ORDER BY t.fecha DESC
-                    """)
-
-                # El caso default
-                case _:
-
-                    # Consutla tabla trabajos
-
-                    cursor.execute("""
-                        SELECT t.trabajo_id, t.fecha, t.estado, t.descripcion, t.IMEI, CONCAT(ma.nombre, ' ', ce.modelo) AS celular, CONCAT(c.nombre, ' ', c.apellido) AS cliente
-                        FROM trabajos t
-                        JOIN celulares ce ON t.celular_id = ce.celular_id
-                        JOIN marcas ma ON ce.marca_id = ma.marca_id
-                        JOIN clientes c ON t.cliente_id = c.cliente_id                        
-                        ORDER BY t.fecha DESC
-                    """)
+                    """, (tipo,))  # Utiliza la variable tipo para comprobar en el where y luego utiliza coma
 
             # Para row que va a recorrer todo lo que obtenga cursor
             for row in cursor.fetchall():
@@ -532,39 +323,9 @@ class TrabajosApp:
         self.entries["Cliente"]["values"] = lista
         conn.close()  # Cierra la conexion
 
-    # Crea la funcion cargar_marcas con el atributo self
-    def cargar_marcas(self):
+    # # Crea la funcion cargar_trabajos_celulares_marcas con el atributo self
 
-        conn = conectar()  # La variable conn llama al metodo conectar
-
-        # Si hay conexion
-        if conn:
-            cursor = conn.cursor()  # La variable cursor llama al metodo cursor de la variable conn
-
-            # Consulta tabla Marcas
-
-            cursor.execute("""
-                SELECT *
-                FROM marcas
-                ORDER BY nombre DESC
-            """)
-
-        self.map_marcas = {}  # Crea el diccionario map_marcas
-        lista = []  # Crea el arreglo lista
-
-        # Para marca_id y texto que van a recorrer todo lo que obtenga cursor
-        for marca_id, texto in cursor.fetchall():
-            # La llave texto de map_marcas va a contener marca_id
-            self.map_marcas[texto] = marca_id
-            lista.append(texto)  # Agrega texto al arreglo lista
-
-        # El valor de la llave Marca de entries va a ser lista
-        self.entries["Marca"]["values"] = lista
-        conn.close()  # Cierra la conexion
-
-    # Crea la funcion cargar_trabajos_celulares_marcas con el atributo self
-
-    def cargar_trabajos_celulares_marcas(self):
+    def cargar_trabajos(self):
 
         conn = conectar()  # La variable conn llama al metodo conectar
 
@@ -599,47 +360,6 @@ class TrabajosApp:
             # Inserta desde el inicio hasta el final los valores en row dentro del tree_trabajo
             self.tree_trabajo.insert("", "end", values=row)
 
-        # Celulares
-
-        # Para i que va a recorrer los hijos del tree_geCel
-        for i in self.tree_gesCel.get_children():
-            # Elimina los hijos que esten en i del tree_gesCel
-            self.tree_gesCel.delete(i)
-
-        # Consulta tabla Celulares
-
-        cursor.execute("""
-            SELECT ce.celular_id, ce.modelo, ma.nombre
-            FROM celulares ce
-            JOIN marcas ma ON ce.marca_id = ma.marca_id 
-            ORDER BY ma.nombre DESC
-        """)
-
-        # Para row que va a recorrer todo lo que obtenga cursor
-        for row in cursor.fetchall():
-            # Inserta desde el inicio hasta el final los valores en row dentro del tree_gesCel
-            self.tree_gesCel.insert("", "end", values=row)
-
-        # Marcas
-
-        # Para i que recorre los hijos del tree_gesMar
-        for i in self.tree_gesMar.get_children():
-            # Elimina los hijos que esten en i del tree_gesMar
-            self.tree_gesMar.delete(i)
-
-        # Consulta tabla marcas
-
-        cursor.execute("""
-            SELECT *
-            FROM marcas
-            ORDER BY nombre DESC
-        """)
-
-        # Para row que recorre todo lo que obtenga cursor
-        for row in cursor.fetchall():
-            # Inserta desde el inicio hasta el final los valores de row dentro del tree_gesMar
-            self.tree_gesMar.insert("", "end", values=row)
-
         conn.close()  # Cierra la conexion
 
     # Crea la funcion seleccionar_trabajos con los atributos self y event
@@ -665,38 +385,6 @@ class TrabajosApp:
             # En la llave "Cliente" del entries pone el valor que este en la posicion 6
             self.entries["Cliente"].set(valores[6])
 
-    # Crea la funcion seleccionar_celulares con los atributos self y event
-    def seleccionar_celulares(self, event):
-
-        # La variable seleccion llama al metodo selection del tree_gesCel
-        seleccion = self.tree_gesCel.selection()
-
-        # Si hay seleccion
-        if seleccion:
-            # La variable valores obtiene los valores de la seleccion en la posicion 0 mediante el metodo item del tree_gesCel
-            valores = self.tree_gesCel.item(seleccion[0])["values"]
-            self.limpiar()  # Llama a la funcion limpiar
-
-            # En la llave "Modelo" del entries inserta desde el inicio los valores en la posicion 1
-            self.entries["Modelo"].insert(0, valores[1])
-            # En la llave "Marca" del entries pone el valor que este en la posicion 2
-            self.entries["Marca"].set(valores[2])
-
-    # Crea la funcion seleccionar_marcas con los atributos self y event
-    def seleccionar_marcas(self, event):
-
-        # La variable seleccion llama al metodo selection del tree_gesMar
-        seleccion = self.tree_gesMar.selection()
-
-        # Si hay seleccion
-        if seleccion:
-            # La variable valores obtiene el valor de la seleccion en la posicion 0 mediante el metodo item del tree_gesMar
-            valores = self.tree_gesMar.item(seleccion[0])["values"]
-            self.limpiar()  # Llama a la funcion limpiar
-
-            # En la llave "GesMarca" del entries inserta al inicio los valores en la posicion 1
-            self.entries["GesMarca"].insert(0, valores[1])
-
     # Crea la funcion obtener_datos_trabajos con el atributo self
     def obtener_datos_trabajos(self):
 
@@ -720,27 +408,6 @@ class TrabajosApp:
         # Devuelve las variables estado, falla, imei, celular_id y cliente_id
         return estado, falla, imei, celular_id, cliente_id
 
-    # Crea la funcion obtener_datos_celulares con el atributo self
-    def obtener_datos_celulares(self):
-
-        # La variable modelo obtiene su valor de la llave "Modelo" del entries
-        modelo = self.entries["Modelo"].get().strip()
-        # La variable marca obtiene su valor de la llave "Marca" del entries
-        marca = self.entries["Marca"].get()
-
-        # La variable marca_id obtiene el id de la marca mediante el metodo get del map_marcas
-        marca_id = self.map_marcas.get(marca)
-
-        return modelo, marca_id  # Devuelve las variables modelo y marca_id
-
-    # Crea la funcion obtener_datos_marcas con el atributo self
-    def obtener_datos_marcas(self):
-
-        # La variable marca obtiene su valor de la llave "GesMarca" del entries
-        marca = self.entries["GesMarca"].get().strip()
-
-        return marca  # Devuelve la variable marca
-
     # Crea la funcion limpiar con el atributo self
     def limpiar(self):
 
@@ -752,11 +419,11 @@ class TrabajosApp:
                 # Elimina desde el caracter 0 hasta el final
                 entry.delete(0, "end")
             # Si no ocurre eso, pero hay una instancia dentro del entry que sea de tipo Text
-            elif isinstance(entry, tk.Text):
+            if isinstance(entry, tk.Text):
                 # Elimina desde el inicio hasta el final
                 entry.delete("1.0", "end")
             # Si no ocurre eso, pero hay una instancia dentro del entry que sea de tipo Combobox
-            elif isinstance(entry, ttk.Combobox):
+            if isinstance(entry, ttk.Combobox):
                 entry.set("")  # Establece el valor en " " (osea vacio)
 
     # Crea la funcion agregar_trabajos con el atributo self
@@ -786,77 +453,11 @@ class TrabajosApp:
 
             conn.commit()  # Termina de ejecutar el insert
             conn.close()  # Cierra la conexion
-            # Llama a la funcion cargar_trabajos_celulares_marcas
-            self.cargar_trabajos_celulares_marcas()
+            # Llama a la funcion cargar_trabajos
+            self.cargar_trabajos()
             self.limpiar()  # Llama a la funcion limpiar
             # Muestra un mensaje de informacion con el titulo "Exito" y con el mensaje "Trabajo agregado"
             messagebox.showinfo("Éxito", "Trabajo agregado")
-
-    # Crea la funcion agregar_celulares con el atributo self
-    def agregar_celulares(self):
-
-        # La variable datos llama a la funcion obtener_datos_celulares
-        datos = self.obtener_datos_celulares()
-
-        # Si no hay datos
-        if not datos:
-            # Muestra un mensaje de error con el titulo "Error" y con el mensaje "No se encontraron datos"
-            messagebox.showerror("Error", "No se encontraron datos")
-            return  # No devuelve nada
-
-        conn = conectar()  # La variable datos llama al metodo conectar
-
-        # Si hay conexion
-        if conn:
-            cursor = conn.cursor()  # La variable cursor llama a la funcion cursor de la variable conn
-
-            # Insertar datos en la tabla celulares
-
-            cursor.execute("""
-                INSERT INTO celulares (modelo, marca_id)
-                VALUES (%s, %s)
-            """, (*datos,))  # Separa la variable datos utilizando coma
-
-        conn.commit()  # Termina de ejecutar el insert
-        conn.close()  # Cierra la conexion
-        # Llama a la funcion cargar_trabajos_celulares_marcas
-        self.cargar_trabajos_celulares_marcas()
-        self.limpiar()  # Llama a la funcion limpiar
-        # Muestra un mensaje de informacion con el titulo "Exito" y con el mensaje "Celular agregado"
-        messagebox.showinfo("Éxito", "Celular agregado")
-
-    # Crea la funcion agregar_marcas con el atributo self
-    def agregar_marcas(self):
-
-        # Crea la variable datos la cual llama obtener_datos_marcas
-        datos = self.obtener_datos_marcas()
-
-        # Si no hay datos
-        if not datos:
-            # Muestra un mensaje de error con el titulo "Error" y con el mensaje "No se encontraron datos"
-            messagebox.showerror("Error", "No se encontraron datos")
-            return  # No devuelve nada
-
-        conn = conectar()  # La variable conn llama al metodo conectar
-
-        # Si hay conexion
-        if conn:
-            cursor = conn.cursor()  # La variable cursor llama al metodo conecar de la variable conn
-
-            # Insertar datos en la tabla marcas
-
-            cursor.execute("""
-                INSERT INTO marcas (nombre)
-                VALUES (%s)
-            """, (datos,))  # Obtiene el dato de la variable datos y utiliza coma al final
-
-        conn.commit()  # Termina de ejecutar el insert
-        conn.close()  # Cierra la conexion
-        # Llama a la funcion cargar_trabajos_celulares_marcas
-        self.cargar_trabajos_celulares_marcas()
-        self.limpiar()  # Llama a la funcion limpiar
-        # Muestra un mensaje de informacion con el titulo "Exito" y con el mensaje "Marca agregada"
-        messagebox.showinfo("Éxito", "Marca agregada")
 
     # Crea la funcion actualizar_trabajos con el atributo self
     def actualizar_trabajos(self):
@@ -898,101 +499,10 @@ class TrabajosApp:
 
             conn.commit()  # Termina de ejecutar la actualizacion de datos
             conn.close()  # Cierra la conexion
-            # Llama a la funcion cargar_trabajos_celulares_marcas
-            self.cargar_trabajos_celulares_marcas()
+            # Llama a la funcion cargar_trabajos
+            self.cargar_trabajos()
             # Muestra un mensaje de informacion con el titulo "Exito" y con el mensaje "Trabajo actualizado"
             messagebox.showinfo("Éxito", "Trabajo actualizado")
-
-    # Crea la funcion actualizar_celulares con el atributo self
-    def actualizar_celulares(self):
-
-        # La variable seleccion llama al metodo selection del tree_gesCel
-        seleccion = self.tree_gesCel.selection()
-
-        # Si no hay seleccion
-        if not seleccion:
-            # Muestra un mensaje de advertencia con el titulo "Selecciona" y con el mensaje "Selecciona un celular"
-            messagebox.showwarning("Selecciona", "Selecciona un celular")
-            return  # No devuelve nada
-
-        # La variable item va a seleccionar el item en la posicion 0 del tree_gesCel
-        item = self.tree_gesCel.item(seleccion[0])
-        # La variable celular_id obtiene los valores en la posicion 0 de item
-        celular_id = item["values"][0]
-        # La variable datos llama a la funcion obtener_datos_celulares
-        datos = self.obtener_datos_celulares()
-
-        # Si no hay datos
-        if not datos:
-            # Muestra un mensaje de error con el titulo "Error" y con el mensaje "No se encontraron datos"
-            messagebox.showerror("Error", "No se encontraron datos")
-            return  # No devuelve nada
-
-        conn = conectar()  # La variable conn llama al metodo conectar
-
-        # Si hay conexion
-        if conn:
-            cursor = conn.cursor()  # La variable cursor llama al metodo cursor de la variable conn
-
-            # Actualizar datos tabla celulares
-
-            cursor.execute("""
-                UPDATE celulares
-                SET modelo=%s, marca_id=%s
-                WHERE celular_id=%s
-            """, (*datos, celular_id))  # Separa los datos de la variable datos y utiliza coma, luego utiliza la variable celular_id
-
-        conn.commit()  # Termina de ejecutar la actualizacion de los datos
-        conn.close()  # Cierra la conexion
-        # Llama a la funcion cargar_trabajos_celulares_marcas
-        self.cargar_trabajos_celulares_marcas()
-        # Muestra un mensaje de informacion con el titulo "Exito" y con el mensaje "Celular actualizado"
-        messagebox.showinfo("Éxito", "Celular actualizado")
-
-    # Crea la funcion actualizar_marcas con el atributo self
-    def actualizar_marcas(self):
-        # La variable seleccion llama al metodo selection del tree_gesMar
-        seleccion = self.tree_gesMar.selection()
-
-        # Si no hay seleccion
-        if not seleccion:
-            # Muestra un mensaje de advertencia con el titulo "Selecciona" y con el mensaje "Selecciona una marca"
-            messagebox.showwarning("Selecciona", "Selecciona una marca")
-            return  # No devuelve nada
-
-        # La variable item obtiene el item en la posicion 0 de la seleccion del tree_gesMar
-        item = self.tree_gesMar.item(seleccion[0])
-        # La variable marca_id obtiene el valor en la posicion 0 del item
-        marca_id = item["values"][0]
-        # La variable datos llama a la funcion obtener_datos_marcas
-        datos = self.obtener_datos_marcas()
-
-        # Si no hay datos
-        if not datos:
-            # Muestra un mensaje de error con el titulo "Error" y con el mensaje "No se encontraron datos"
-            messagebox.showerror("Error", "No se encontraron datos")
-            return  # No devuelve nada
-
-        conn = conectar()  # La variable conn llama al metodo conectar
-
-        # Si hay conexion
-        if conn:
-            cursor = conn.cursor()  # La variable cursor llama al metodo cursor de la variable conn
-
-            # Actualizar datos de la tabla marcas
-
-            cursor.execute("""
-                UPDATE marcas
-                SET nombre=%s
-                WHERE marca_id=%s
-            """, (datos, marca_id))  # Utiliza el dato de la variable datos y luego marca_id
-
-        conn.commit()  # Termina de ejecutar la actualizacion de los datos
-        conn.close()  # Cierra la conexion
-        # Llama a la funcion cargar_trabajos_celulares_marcas
-        self.cargar_trabajos_celulares_marcas()
-        # Muestra un mensaje de informacion con el titulo "Exito" y con el mensaje "Marca actualizada"
-        messagebox.showinfo("Éxito", "Marca Actualizada")
 
     # Crea la funcion eliminar_trabajos con el atributo self
     def eliminar_trabajos(self):
@@ -1026,75 +536,5 @@ class TrabajosApp:
 
                 conn.commit()  # Termina de ejecutar la eliminacion de datos
                 conn.close()  # Cierra la conexion
-                # Llama a la funcion cargar_trabajos_celulares_marcas
-                self.cargar_trabajos_celulares_marcas()
-
-    # Crea la funcion eliminar celulares con el atributo self
-    def eliminar_celulares(self):
-
-        # La variable seleccion llama al metodo selection de tree_gesCel
-        seleccion = self.tree_gesCel.selection()
-
-        # Si no hay seleccion
-        if not seleccion:
-            # Muestra un mensaje de advertencia con el titulo "Selecciona" y con el mensaje "Selecciona un celular"
-            messagebox.showwarning("Selecciona", "Selecciona un celular")
-            return  # No devuelve nada
-
-        # Si el usuario presiona "Si" en el mensaje de tipo si o no con el titulo "Confirmar" y con el mensaje "¿Eliminar celular?"
-        if messagebox.askyesno("Confirmar", "¿Eliminar celular?"):
-            # La variable celular_id va a obtener el valor en la posicion 0 de la seleccion en la posicion 0 mediante el metodo item dem tree_gesCel
-            celular_id = self.tree_gesCel.item(seleccion[0])["values"][0]
-
-            conn = conectar()  # La variable conn llama al metodo conectar
-
-            # Si hay conexion
-            if conn:
-                cursor = conn.cursor()  # La variable cursor llama al metodo cursor de la variable conn
-
-                # Eliminar datos de la tabla celulares
-
-                cursor.execute("""
-                    DELETE FROM celulares
-                    WHERE celular_id=%s
-                """, (celular_id,))  # Utiliza la variable celular_id con una coma al final
-
-                conn.commit()  # Termina de ejecutar la eliminacion de datos
-                conn.close()  # Cierra la conexion
-                # Llama al metodo cargar_trabajos_celulares_marcas
-                self.cargar_trabajos_celulares_marcas()
-
-    # Crea la funcion eliminar_marcas con el atributo self
-    def eliminar_marcas(self):
-
-        # La variable seleccion llama al metodo selection del tree_gesMar
-        seleccion = self.tree_gesMar.selection()
-
-        # Si no hay seleccion
-        if not seleccion:
-            # Muestra un mensaje de advertencia con el titulo "Selecciona" y con el mensaje "Selecciona un celular"
-            messagebox.showwarning("Selecciona", "Selecciona un celular")
-            return  # No devuelve nada
-
-        # Si el usuario responde "Si" en el mensaje de tipo si o no con el titulo "Confirmar" y con el mensaje "¿Eliminar marca?"
-        if messagebox.askyesno("Confirmar", "¿Eliminar marca?"):
-            # La variable marca_id obtiene el valor en la posicion 0 de la seleccion en la posicion 0 mediante el metodo item del tree_gesMar
-            marca_id = self.tree_gesMar.item(seleccion[0])["values"][0]
-
-            conn = conectar()  # La variable conn llama al metodo conectar
-
-            # Si hay conexion
-            if conn:
-                cursor = conn.cursor()  # La variable cursor llama al metodo cursor de la variable conn
-
-                # Eliminar datos de la tabla marcas
-
-                cursor.execute("""
-                    DELETE FROM marcas
-                    WHERE marca_id=%s
-                """, (marca_id,))  # Utiliza la variable marca_id con una coma al final
-
-                conn.commit()  # Termina de ejecutar la eliminacion de datos
-                conn.close()  # Cierra la conexion
-                # Llama a la funcion cargar_trabajos_celulares_marcas
-                self.cargar_trabajos_celulares_marcas()
+                # Llama a la funcion cargar_trabajos
+                self.cargar_trabajos()

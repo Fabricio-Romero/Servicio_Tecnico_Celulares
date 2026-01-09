@@ -21,41 +21,28 @@ class ProveedoresApp:
         # Empaqueta la variable frame dejando un espacio de 15 pixeles en el eje Y y 20 pixeles en el eje X
         frame.pack(pady=15, padx=20)
 
-        self.entries = {}  # Crea el diccionario entries
-
         # Labels y Entrys
 
-        tk.Label(frame, text="Comercio:").grid(  # Crea un Label/Etiqueta dentro del frame con el texto "Comercio:"
-            # Utiliza grid/malla para ubicarlo en la fila 0, columna 0, lo posiciona lo mas al west/oeste (izquierda) posible y dejando un espacio de 2 pixeles en el eje Y
-            row=0, column=0, sticky="w", pady=2)
-        # La llave "Comercio" del entries crea un Entry/Entrada dentro del frame con un ancho de 25 pixeles
-        self.entries["Comercio"] = tk.Entry(frame, width=25)
-        self.entries["Comercio"].grid(  # Utiliza grid/malla para ubicarlo en la fila 0, columna 1, deja un espacio de 2 pixeles en el eje Y y 5 pixeles en el eje X
-            row=0, column=1, pady=2, padx=5)
+        # El arreglo campos contiene los textos y las llaves de los Labels y Entries
+        campos = ["Comercio", "Nombre", "Apellido", "Telefono"]
 
-        tk.Label(frame, text="Nombre:").grid(  # Crea un Lable/Etiqueta dentro del frame con el texto "Nombre:"
-            # Utiliza grid/malla para ubicarlo en la fila 0, columna 2, lo posiciona lo mas al west/oeste (izquierda) posible y dejando un espacio de 2 pixeles en el eje Y
-            row=0, column=2, sticky="w", pady=2)
-        # La llave "Nombre" del entries crea un Entry/Entrada dentro del frame con un ancho de 25 pixeles
-        self.entries["Nombre"] = tk.Entry(frame, width=25)
-        self.entries["Nombre"].grid(  # Utiliza grid/malla para ubicarlo en la fila 0, columna 3, deja un espacio de 2 pixeles en el eje Y y 5 pixeles en el eje X
-            row=0, column=3, pady=2, padx=5)
+        self.entries = {}  # Crea el diccionario entries
 
-        tk.Label(frame, text="Apellido:").grid(  # Crea un Label/Etiqueta dentrp del frame con el texto "Apellido:"
-            # Utiliza grid/malla para ubicarlo en la fila 0, columna 4, lo posiciona lo mas al west/oeste (izquierda) posible y dejando un espacio de 2 pixeles en el eje Y
-            row=0, column=4, sticky="w", pady=2)
-        # La llave "Apellido" crea un Entry/Entrada dentro del frame con un ancho de 25 pixeles
-        self.entries["Apellido"] = tk.Entry(frame, width=25)
-        self.entries["Apellido"].grid(  # Utiliza grid/malla para ubicarlo en la fila 0, columna 5, deja un espacio de 2 pixeles en el eje Y y 5 pixeles en el eje X
-            row=0, column=5, pady=2, padx=5)
+        # Para i y campo que va a recorrer la enumeracion de campos
+        for i, campo in enumerate(campos):
+            # i contiene numeros impares (Para la posicion de los Labels)
+            i += i + 1
+            # j contiene numeros pares (Para la posicion de los Entries)
+            j = i + 1
 
-        tk.Label(frame, text="Teléfono:").grid(  # Crea un Label/Etiqueta dentro del frame con el texto "Telefono:"
-            # Utiliza grid/malla para ubicarlo en la fila 0, columna 6, lo posiciona lo mas al west/oeste (izquierda) posible y dejando un espacio de 2 pixeles en el eje Y
-            row=0, column=6, sticky="w", pady=2)
-        # La llave "Telefono" Crea un Entry dentro del frame con un ancho de 25 pixeles
-        self.entries["Telefono"] = tk.Entry(frame, width=25)
-        self.entries["Telefono"].grid(  # Utiliza grid/malla para ubicarlo en la fila 0, columna 7, dejando un espacio de 2 pixeles en el eje Y y 5 pixeles en el eje X
-            row=0, column=7, pady=2, padx=5)
+            # Crea un Label/Entry dentrp del frame con el texto que contenga campo
+            # Utiliza grid para ubicarlo en la fila 0, columna i, lo posiciona lo mas al west/oeste (izquierda) posible, deja un espacio de 2 pixeles en el eje Y
+            tk.Label(frame, text=campo).grid(
+                row=0, column=i, sticky="w", pady=2)
+            # En la llave campo del entries crea un Entry dentro del frame con un ancho de 25 pixeles
+            self.entries[campo] = tk.Entry(frame, width=25)
+            # Utiliza grid para ubicarlo en la fila 0, columna j, deja un espacio de 2 pixeles en el eje Y y 5 pixeles en el eje X
+            self.entries[campo].grid(row=0, column=j, pady=2, padx=5)
 
         # Botones
 

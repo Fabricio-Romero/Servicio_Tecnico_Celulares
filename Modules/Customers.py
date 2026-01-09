@@ -65,32 +65,22 @@ class ClientesApp:
 
         self.entries = {}  # Crea el diccionario entries
 
-        tk.Label(form_frame, text="Nombre:").grid(  # Crea un label/etiqueta dentro del frame_from, con el texto "Nombre:"
-            # Utiliza grid/malla para ubicarlo en la fila 0, columna 2, lo posiciona lo mas al west/osete posible (mas a la izquierda) y deja una separacion de 2 pixeles en el eje Y
-            row=0, column=2, sticky="w", pady=2)
-        # Crea la llave "Nombre" el cual contiene un Entry dentro del form_frame, con un ancho de 25 pixeles
-        self.entries["Nombre"] = tk.Entry(form_frame, width=25)
-        self.entries["Nombre"].grid(  # La llave "Nombre" utiliza grid/malla
-            # Lo ubica en la fila 0, en la columna 3, deja una separacion de 2 pixeles en el eje Y y 5 pixeles en el eje X
-            row=0, column=3, pady=2, padx=5)
+        # El arreglo campos guarda el nombre de los labels y entries
+        campos = ["Nombre", "Apellido", "Contacto"]
 
-        tk.Label(form_frame, text="Apellido:").grid(  # Crea un label/etiqueta dentro del form_frame, con el texto "Apellido:"
-            # Utiliza grid/malla para ubicarlo en la fila 0, columna 5, posicionarlo lo mas al west/oeste posible (mas a la izquierda) y deja 2 pixeles de espacio en el eje Y
-            row=0, column=4, sticky="w", pady=2)
-        # Crea la llave "Apellido" el cual contiene un Entry dentro del form_frame con un ancho de 25 pixeles
-        self.entries["Apellido"] = tk.Entry(form_frame, width=25)
-        self.entries["Apellido"].grid(  # La llave "Apellido" utiliza grid/malla
-            # Lo ubica en la fila 0, columna 5, con una separacion de 2 pixeles en el eje Y y 5 Pixeles en el eje X
-            row=0, column=5, pady=2, padx=5)
-
-        tk.Label(form_frame, text="Contacto:").grid(  # Crea un label/etiqueta dentro del form_frame y con el texto "Contacto"
-            # Utiliza grid/malla para ubicarlo en la fila 0, columna 6, posicionarlo en lo mas al west/oeste posible (mas a la izquierda) y con una separacion de 2 pixeles en el eje Y
-            row=0, column=6, sticky="w", pady=2)
-        # Crea la llave "Contacto" el cual contiene un Entry dentro del form_frame y con un ancho de 25 pixeles
-        self.entries["Contacto"] = tk.Entry(form_frame, width=25)
-        self.entries["Contacto"].grid(  # La llave "Contacto" utiliza grid/malla
-            # Lo ubica en la fila 0, columna 7, con una separacion de 2 pixeles en el eje Y y 5 pixeles en el eje X
-            row=0, column=7, pady=2, padx=5)
+        # Para i y campo que van a recorrer la enumeracion de campos
+        for i, campo in enumerate(campos):
+            # La variable i va a guardar numeros impares (la posicion de las columnas Labels)
+            i += i + 1
+            # La variable j va a guardar numero pares (la posicion de las columnas de los Entries)
+            j = i + 1
+            # Crea un Label/Etiqueta dentro del form_frame con el texto campo mas ":", Utiliza grid para ubicarlo en la fila 0, columna i, lo posiciona lo mas al west/oeste (izquierda) posible y deja un espacio de 2 pixeles en el eje Y
+            tk.Label(form_frame, text=campo + ":").grid(row=0,
+                                                        column=i, sticky="w", pady=2)
+            # La llave campo del entries crea un Entry dentro del form_frame con un ancho de 25 pixeles
+            self.entries[campo] = tk.Entry(form_frame, width=25)
+            # Utiliza grid para ubicarlo en la fila 0, columna j, deja un espacio de 2 pixeles en el eje Y y 5 pixeles en el eje X
+            self.entries[campo].grid(row=0, column=j, pady=2, padx=5)
 
         # Botones
 
@@ -171,25 +161,12 @@ class ClientesApp:
             # Elimina el hijo del tree_cliente que este en la posicion i
             self.tree_cliente.delete(i)
 
-        # Consulta tabla Clientes
-
-        cursor.execute("""
-            SELECT nombre, apellido, contacto
-            FROM clientes
-            ORDER BY nombre DESC
-        """)
-
-        # row va a recorrer todo lo que cursor obtenga mediante el metodo fetchall
-        for row in cursor.fetchall():
-            # Inserta en el tree_cliente desde el inicio hasta el final el valor que este en row
-            self.tree_cliente.insert("", "end", values=row)
-
         # i va a recorrer los hijos del tree_gesCli mediante el metodo get_children
         for i in self.tree_gesCli.get_children():
             # elimina el hijo que este en la posicion i del tree_gesCli
             self.tree_gesCli.delete(i)
 
-        # Consulta de la tabla clientes
+        # Consulta tabla Clientes
 
         cursor.execute("""
             SELECT *
@@ -197,8 +174,10 @@ class ClientesApp:
             ORDER BY nombre DESC
         """)
 
-        # row recorre todo lo que obtenga la variable cursor mediante el metodo fetchall
+        # row va a recorrer todo lo que cursor obtenga mediante el metodo fetchall
         for row in cursor.fetchall():
+            # Inserta en el tree_cliente desde el indice 1 hasta el final el valor que este en row
+            self.tree_cliente.insert("", "end", values=row[1:])
             # Inserta en el tree_gescli desde el inicio hasat el final los valores que esten en row
             self.tree_gesCli.insert("", "end", values=row)
 
@@ -244,9 +223,6 @@ class ClientesApp:
             if isinstance(entry, tk.Entry):
                 # Elimina el valor desde el principio hasta el final
                 entry.delete(0, "end")
-            # Si no pasa eso pero hay una instancia dentro del entry que sea de tipo Combobox
-            elif isinstance(entry, ttk.Combobox):
-                entry.set("")  # Establece el valor en un espacio vacio
 
     # Crea la funcion agregar con el atributo self
     def agregar(self):
